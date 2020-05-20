@@ -159,6 +159,10 @@ void Anonymizer::DCMTK_anonymizeDcm(QString folderChoose, QFileInfoList dcmList)
 			//LB.printLog(mZlib.str2qstr("create folder: " + createDir.toStdString()));
 		}
 	}
+	else
+	{
+		dir.rmdir(createDir);
+	}
 	//QDir dir(folderChoose);
 	if (dcmList.size() == 0)
 	{
@@ -214,6 +218,10 @@ void Anonymizer::anonymizeZip(QString folderChoose, QFileInfoList zipList)
 			std::cout << "create folder: " << createUnzipDir.toStdString() << std::endl;
 			//LB.printLog(mZlib.str2qstr("create folder: " + createUnzipDir.toStdString()));
 		}
+	}
+	else
+	{
+		dir.rmdir(createUnzipDir);
 	}
 
 	
