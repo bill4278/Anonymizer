@@ -1,0 +1,126 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{4B5E794C-79E1-4083-B937-7362A2D267D7}</ProjectGuid>
+    <Keyword>QtVS_v302</Keyword>
+    <QtMsBuild Condition="'$(QtMsBuild)'=='' OR !Exists('$(QtMsBuild)\qt.targets')">$(MSBuildProjectDirectory)\QtMsBuild</QtMsBuild>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <Target Name="QtMsBuildNotFound" BeforeTargets="CustomBuild;ClCompile" Condition="!Exists('$(QtMsBuild)\qt.targets') or !Exists('$(QtMsBuild)\qt.props')">
+    <Message Importance="High" Text="QtMsBuild: could not locate qt.targets, qt.props; project may not build correctly." />
+  </Target>
+  <ImportGroup Label="ExtensionSettings" />
+  <ImportGroup Label="Shared" />
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>D:\Qt\Qt5.12.3\5.12.3\msvc2015_64\include;D:\Program\Tools\DCMTK\Install_Debug\include;D:\Program\Tools\ITK_4_8_2\Install_Debug\include\ITK-4.8;D:\Program\Tools\zlib-1.2.11;D:\Program\Tools\zlib-1.2.11\contrib\minizip;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\Program\Tools\DCMTK\Install_Debug\lib;D:\Program\Tools\ITK_4_8_2\Install_Debug\lib;D:\Program\Tools\zlib-1.2.11\contrib\vstudio\vc14\x64\ZlibDllDebug;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>D:\Qt\Qt5.12.3\5.12.3\msvc2015_64\include;D:\Program\Tools\DCMTK\Install_Release\include;D:\Program\Tools\ITK_4_8_2\Install_Release\include\ITK-4.8;D:\Program\Tools\zlib-1.2.11;D:\Program\Tools\zlib-1.2.11\contrib\minizip;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\Program\Tools\DCMTK\Install_Release\lib;D:\Program\Tools\ITK_4_8_2\Install_Release\lib;D:\Program\Tools\zlib-1.2.11\contrib\vstudio\vc14\x64\ZlibDllRelease;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ImportGroup Condition="Exists('$(QtMsBuild)\qt_defaults.props')">
+    <Import Project="$(QtMsBuild)\qt_defaults.props" />
+  </ImportGroup>
+  <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <QtInstall>msvc2015_64</QtInstall>
+    <QtModules>core;gui;widgets</QtModules>
+  </PropertyGroup>
+  <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <QtInstall>msvc2015_64</QtInstall>
+    <QtModules>core;gui;widgets</QtModules>
+  </PropertyGroup>
+  <ImportGroup Condition="Exists('$(QtMsBuild)\qt.props')">
+    <Import Project="$(QtMsBuild)\qt.props" />
+  </ImportGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <Optimization>Disabled</Optimization>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <AdditionalIncludeDirectories>D:\Program\Tools\DCMTK\Install_Debug\include;D:\Program\Tools\zlib-1.2.11;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>ws2_32.lib;wsock32.lib;netapi32.lib;ofstd.lib;oflog.lib;charls.lib;dcmdata.lib;dcmdsig.lib;dcmimage.lib;dcmimgle.lib;dcmjpeg.lib;dcmjpls.lib;dcmnet.lib;dcmpstat.lib;dcmqrdb.lib;dcmsr.lib;dcmtls.lib;dcmwlm.lib;ijg8.lib;ijg12.lib;ijg16.lib;libi2d.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKBiasCorrection-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKBioCell-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKCommon-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKDICOMParser-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\itkdouble-conversion-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKEXPAT-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKFEM-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKFFT-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\itkgdcmcharls-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\itkgdcmCommon-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\itkgdcmDICT-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\itkgdcmDSED-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\itkgdcmIOD-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\itkgdcmjpeg12-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\itkgdcmjpeg16-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\itkgdcmjpeg8-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\itkgdcmMEXD-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\itkgdcmMSFF-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\itkgdcmopenjpeg-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\itkgdcmsocketxx-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKgiftiio-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\itkhdf5-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\itkhdf5_cpp-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKIOBioRad-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKIOBMP-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKIOCSV-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKIODCMTK-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKIOGDCM-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKIOGE-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKIOGIPL-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKIOHDF5-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKIOImageBase-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKIOIPL-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKIOJPEG-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKIOLSM-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKIOMesh-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKIOMeta-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKIOMRC-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKIONIFTI-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKIONRRD-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKIOPNG-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKIOSiemens-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKIOSpatialObjects-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKIOStimulate-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKIOTIFF-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKIOTransformBase-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\itkIOTransformDCMTK-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKIOTransformHDF5-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKIOTransformInsightLegacy-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKIOTransformMatlab-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKIOVTK-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKIOXML-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\itkjpeg-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKKLMRegionGrowing-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKLabelMap-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKMesh-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKMetaIO-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\itkNetlibSlatec-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKniftiio-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKNrrdIO-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\itkopenjpeg-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKOptimizers-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKOptimizersv4-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKPath-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\itkpng-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKPolynomials-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKQuadEdgeMesh-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKReview-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKSpatialObjects-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKStatistics-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\itksys-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\itktestlib-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\itktiff-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\itkv3p_lsqr-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\itkv3p_netlib-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\itkvcl-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKVideoCore-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKVideoIO-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\itkvnl-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKVNLInstantiation-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\itkvnl_algo-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKVTK-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKVtkGlue-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKWatersheds-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\itkzlib-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Debug\ITKznz-4.8.lib;D:\Program\Tools\zlib-1.2.11\contrib\vstudio\vc14\x64\ZlibDllDebug\zlibwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <DebugInformationFormat />
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <AdditionalIncludeDirectories>D:\Program\Tools\DCMTK\Install_Release\include;D:\Program\Tools\zlib-1.2.11;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <AdditionalDependencies>ws2_32.lib;wsock32.lib;netapi32.lib;ofstd.lib;oflog.lib;charls.lib;dcmdata.lib;dcmdsig.lib;dcmimage.lib;dcmimgle.lib;dcmjpeg.lib;dcmjpls.lib;dcmnet.lib;dcmpstat.lib;dcmqrdb.lib;dcmsr.lib;dcmtls.lib;dcmwlm.lib;ijg8.lib;ijg12.lib;ijg16.lib;libi2d.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKBiasCorrection-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKBioCell-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKCommon-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKDICOMParser-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\itkdouble-conversion-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKEXPAT-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKFEM-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKFFT-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\itkgdcmcharls-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\itkgdcmCommon-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\itkgdcmDICT-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\itkgdcmDSED-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\itkgdcmIOD-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\itkgdcmjpeg12-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\itkgdcmjpeg16-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\itkgdcmjpeg8-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\itkgdcmMEXD-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\itkgdcmMSFF-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\itkgdcmopenjpeg-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\itkgdcmsocketxx-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKgiftiio-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\itkhdf5-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\itkhdf5_cpp-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKIOBioRad-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKIOBMP-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKIOCSV-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKIODCMTK-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKIOGDCM-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKIOGE-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKIOGIPL-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKIOHDF5-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKIOImageBase-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKIOIPL-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKIOJPEG-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKIOLSM-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKIOMesh-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKIOMeta-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKIOMRC-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKIONIFTI-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKIONRRD-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKIOPNG-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKIOSiemens-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKIOSpatialObjects-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKIOStimulate-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKIOTIFF-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKIOTransformBase-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\itkIOTransformDCMTK-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKIOTransformHDF5-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKIOTransformInsightLegacy-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKIOTransformMatlab-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKIOVTK-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKIOXML-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\itkjpeg-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKKLMRegionGrowing-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKLabelMap-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKMesh-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKMetaIO-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\itkNetlibSlatec-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKniftiio-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKNrrdIO-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\itkopenjpeg-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKOptimizers-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKOptimizersv4-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKPath-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\itkpng-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKPolynomials-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKQuadEdgeMesh-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKReview-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKSpatialObjects-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKStatistics-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\itksys-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\itktestlib-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\itktiff-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\itkv3p_lsqr-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\itkv3p_netlib-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\itkvcl-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKVideoCore-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKVideoIO-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\itkvnl-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKVNLInstantiation-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\itkvnl_algo-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKVTK-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKVtkGlue-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKWatersheds-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\itkzlib-4.8.lib;D:\Program\Tools\ITK_4_8_2\Build\lib\Release\ITKznz-4.8.lib;D:\Program\Tools\zlib-1.2.11\contrib\vstudio\vc14\x64\ZlibDllRelease\zlibwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="Anonymizer.cpp" />
+    <ClCompile Include="compressAndUncompress.cpp" />
+    <ClCompile Include="LogBrowser.cpp" />
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="Anonymizer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtUic Include="Anonymizer.ui" />
+    <QtUic Include="LogBrowser.ui" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtRcc Include="Anonymizer.qrc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="compressAndUncompress.h" />
+    <QtMoc Include="LogBrowser.h" />
+    <ClInclude Include="testZip.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Anonymizer.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Anonymizer.rc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
+    <Import Project="$(QtMsBuild)\qt.targets" />
+  </ImportGroup>
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
