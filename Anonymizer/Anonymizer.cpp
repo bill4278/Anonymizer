@@ -159,6 +159,10 @@ void Anonymizer::DCMTK_anonymizeDcm(QString folderChoose, QFileInfoList dcmList)
 			//LB.printLog(mZlib.str2qstr("create folder: " + createDir.toStdString()));
 		}
 	}
+	else
+	{
+		dir.rmdir(createDir);
+	}
 	//QDir dir(folderChoose);
 	if (dcmList.size() == 0)
 	{
