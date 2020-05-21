@@ -24,6 +24,9 @@ void Anonymizer::setupConnection()
 {
 
 	connect(ui.pushButton, SIGNAL(clicked()), this, SLOT(slot_btn_chooseFolder()));
+	connect(ui.pushButton_2, SIGNAL(clicked()), this, SLOT(slot_btn_chooseFolderForDcm()));
+	connect(ui.pushButton_3, SIGNAL(clicked()), this, SLOT(slot_btn_chooseFolderForZip()));
+	connect(ui.pushButton_4, SIGNAL(clicked()), this, SLOT(slot_btn_chooseFolderForNoSuffix()));
 
 }
 
@@ -330,17 +333,21 @@ void Anonymizer::anonymizeNoSuffix(QString folderChoose)
 
 void Anonymizer::slot_btn_chooseFolder()
 {
-	
-	ui.label_3->setText("Processing...");
-	ui.label_4->setText("");
-	ui.progressBar->setValue(0);
-	ui.progressBar_2->setValue(0);
-	ui.progressBar_3->setValue(0);
-
 	QString folderChoose = fileDialog->getExistingDirectory();
 	if (folderChoose != NULL)
 	{
+		ui.label_3->setText("Processing...");
+		ui.label_3->setStyleSheet("color:#389fff;");
+		ui.label_4->setText("");
+		ui.progressBar->setValue(0);
+		ui.progressBar_2->setValue(0);
+		ui.progressBar_3->setValue(0);
+
 		ui.pushButton->setDisabled(true);
+		ui.pushButton_2->setDisabled(true);
+		ui.pushButton_3->setDisabled(true);
+		ui.pushButton_4->setDisabled(true);
+
 		ui.label_4->setText(folderChoose);
 		nameFiltersDcm << "*.dcm";
 		QFileInfoList dcmList = getFileList(folderChoose, nameFiltersDcm);
@@ -351,8 +358,117 @@ void Anonymizer::slot_btn_chooseFolder()
 		anonymizeNoSuffix(folderChoose);
 
 		ui.label_3->setText("Finished!");
+		ui.label_3->setStyleSheet("color:#00ff00;");
 		ui.pushButton->setDisabled(false);
+		ui.pushButton_2->setDisabled(false);
+		ui.pushButton_3->setDisabled(false);
+		ui.pushButton_4->setDisabled(false);
 	}
 
     
+}
+
+void Anonymizer::slot_btn_chooseFolderForDcm()
+{
+
+	QString folderChoose = fileDialog->getExistingDirectory();
+	if (folderChoose != NULL)
+	{
+
+		ui.label_3->setText("Processing...");
+		ui.label_3->setStyleSheet("color:#389fff;");
+		ui.label_4->setText("");
+		ui.progressBar->setValue(0);
+		ui.progressBar_2->setValue(0);
+		ui.progressBar_3->setValue(0);
+
+		ui.pushButton->setDisabled(true);
+		ui.pushButton_2->setDisabled(true);
+		ui.pushButton_3->setDisabled(true);
+		ui.pushButton_4->setDisabled(true);
+
+		ui.label_4->setText(folderChoose);
+
+		nameFiltersDcm << "*.dcm";
+		QFileInfoList dcmList = getFileList(folderChoose, nameFiltersDcm);
+		DCMTK_anonymizeDcm(folderChoose, dcmList);
+
+		ui.label_3->setText("Finished!");
+		ui.label_3->setStyleSheet("color:#00ff00;");
+		ui.pushButton->setDisabled(false);
+		ui.pushButton_2->setDisabled(false);
+		ui.pushButton_3->setDisabled(false);
+		ui.pushButton_4->setDisabled(false);
+	}
+
+
+}
+
+void Anonymizer::slot_btn_chooseFolderForZip()
+{
+
+	QString folderChoose = fileDialog->getExistingDirectory();
+	if (folderChoose != NULL)
+	{
+
+		ui.label_3->setText("Processing...");
+		ui.label_3->setStyleSheet("color:#389fff;");
+		ui.label_4->setText("");
+		ui.progressBar->setValue(0);
+		ui.progressBar_2->setValue(0);
+		ui.progressBar_3->setValue(0);
+
+		ui.pushButton->setDisabled(true);
+		ui.pushButton_2->setDisabled(true);
+		ui.pushButton_3->setDisabled(true);
+		ui.pushButton_4->setDisabled(true);
+		ui.label_4->setText(folderChoose);
+
+		nameFiltersZip << "*.zip";
+		QFileInfoList zipList = getFileList(folderChoose, nameFiltersZip);
+		anonymizeZip(folderChoose, zipList);
+
+
+		ui.label_3->setText("Finished!");
+		ui.label_3->setStyleSheet("color:#00ff00;");
+		ui.pushButton->setDisabled(false);
+		ui.pushButton_2->setDisabled(false);
+		ui.pushButton_3->setDisabled(false);
+		ui.pushButton_4->setDisabled(false);
+	}
+
+
+}
+
+void Anonymizer::slot_btn_chooseFolderForNoSuffix()
+{
+
+	QString folderChoose = fileDialog->getExistingDirectory();
+	if (folderChoose != NULL)
+	{
+		ui.label_3->setText("Processing...");
+		ui.label_3->setStyleSheet("color:#389fff;");
+		ui.label_4->setText("");
+		ui.progressBar->setValue(0);
+		ui.progressBar_2->setValue(0);
+		ui.progressBar_3->setValue(0);
+
+		ui.pushButton->setDisabled(true);
+		ui.pushButton_2->setDisabled(true);
+		ui.pushButton_3->setDisabled(true);
+		ui.pushButton_4->setDisabled(true);
+		ui.label_4->setText(folderChoose);
+
+		anonymizeNoSuffix(folderChoose);
+
+		ui.label_3->setText("Finished!");
+		ui.label_3->setStyleSheet("color:#00ff00;");
+		ui.pushButton->setDisabled(false);
+		ui.pushButton_2->setDisabled(false);
+		ui.pushButton_3->setDisabled(false);
+		ui.pushButton_4->setDisabled(false);
+	}
+
+
+
 }

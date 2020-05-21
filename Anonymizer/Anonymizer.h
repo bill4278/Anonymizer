@@ -93,4 +93,7 @@ private:
 
 private slots:
 	void slot_btn_chooseFolder();
+	void slot_btn_chooseFolderForDcm();
+	void slot_btn_chooseFolderForZip();
+	void slot_btn_chooseFolderForNoSuffix();
 };
