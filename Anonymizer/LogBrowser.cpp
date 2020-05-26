@@ -1,13 +1,12 @@
 #include <iostream>
 #include "LogBrowser.h"
-#include "errno.h"
 
 #if _MSC_VER >=1600
 #pragma execution_character_set("utf-8")
 #endif
 
 //https://jingyan.baidu.com/article/a65957f4d2cce824e67f9b21.html
-LogBrower::LogBrower(QWidget *parent)
+LogBrowser::LogBrowser(QWidget *parent)
 	: QMainWindow(parent)
 {
 
@@ -15,8 +14,30 @@ LogBrower::LogBrower(QWidget *parent)
 
 }
 
-
-void LogBrower::printLog(QString logQStr)
+void LogBrowser::closeEvent(QCloseEvent *event)
 {
-	ui.textBrowser->append(logQStr);
+	QMessageBox::StandardButton button;
+	button = QMessageBox::question(this, tr("close log browser"),
+		QString(tr("Do you want to close log browser ?")),
+		QMessageBox::Yes | QMessageBox::No);
+
+	if (button == QMessageBox::No) {
+		event->ignore(); 
+	}
+	else if (button == QMessageBox::Yes) {
+		event->accept();  
+	}
+
 }
+
+
+void LogBrowser::printLog(QString logQStr)
+{
+	ui.logTextBrowser->append(logQStr);
+}
+
+void LogBrowser::printError(QString errQStr)
+{
+	ui.errorTextBrowser->append(errQStr);
+}
+

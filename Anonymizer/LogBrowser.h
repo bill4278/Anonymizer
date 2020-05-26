@@ -7,25 +7,23 @@
 
 #include <QtWidgets/QMainWindow>
 #include "ui_LogBrowser.h"
-#include <QFileDialog>
 #include <QDir>
 #include <QFile>
+#include <QCloseEvent>
 #include <QMessageBox>
 
-class LogBrower : public QMainWindow
+class LogBrowser : public QMainWindow
 {
 	Q_OBJECT
 
 public:
-	LogBrower(QWidget *parent = Q_NULLPTR);
+	LogBrowser(QWidget *parent = Q_NULLPTR);
 
 	void printLog(QString logQStr);
-
-	
+	void printError(QString errQStr);
+	Ui::LogBrowser ui;
 
 private:
-	Ui::LogBrower ui;
-
-
+	void closeEvent(QCloseEvent *event);
 
 };

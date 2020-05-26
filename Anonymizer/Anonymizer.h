@@ -1,5 +1,3 @@
-
-
 #pragma once
 #pragma comment(lib,"rpcrt4.lib")
 
@@ -9,12 +7,14 @@
 
 #include <QtWidgets/QMainWindow>
 #include "ui_Anonymizer.h"
-//#include "LogBrowser.h"
+#include "LogBrowser.h"
 #include "compressAndUncompress.h"
 #include <QFileDialog>
 #include <QDir>
 #include <QFile>
 #include <QMessageBox>
+#include <QCloseEvent>
+
 // #include "itkImage.h"
 // #include "itkImageFileReader.h"
 // #include "itkImageFileWriter.h"
@@ -37,6 +37,9 @@ public:
 	Anonymizer(QWidget *parent = Q_NULLPTR);
 
 	QFileDialog *fileDialog = new QFileDialog(this);
+
+	LogBrowser LogBrowserWindow;
+
 
 private:
 	Ui::mainWindow ui;
@@ -88,7 +91,7 @@ private:
 	QStringList nameFiltersAllSuffix;
 	QStringList nameFiltersAllFile;
 
-	//LogBrower LB;
+	
 	CZlib mZlib;
 
 private slots:
@@ -96,4 +99,6 @@ private slots:
 	void slot_btn_chooseFolderForDcm();
 	void slot_btn_chooseFolderForZip();
 	void slot_btn_chooseFolderForNoSuffix();
+
+	void closeEvent(QCloseEvent *event);
 };
