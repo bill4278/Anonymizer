@@ -237,8 +237,8 @@ void Anonymizer::DCMTK_anonymizeDcm(QString folderChoose, QFileInfoList dcmList)
 		}
 		else
 		{
-			LogBrowserWindow.printLog(mZlib.str2qstr("<font color = 'red'><b> error to anonymized: </b></font>") + mZlib.str2qstr(std::string(dcmPath_char)));
-			LogBrowserWindow.printError(mZlib.str2qstr("<font color = 'red'><b> error to anonymized: </b></font>") + mZlib.str2qstr(std::string(dcmPath_char)));
+			LogBrowserWindow.printLog(mZlib.str2qstr("<font color = 'red'><b> error to anonymize: </b></font>") + mZlib.str2qstr(std::string(dcmPath_char)));
+			LogBrowserWindow.printError(mZlib.str2qstr("<font color = 'red'><b> error to anonymize: </b></font>") + mZlib.str2qstr(std::string(dcmPath_char)));
 		}
 
 		
@@ -306,8 +306,8 @@ void Anonymizer::anonymizeZip(QString folderChoose, QFileInfoList zipList)
 		else
 		{
 			std::cout << "!!!!!  failed uncompressed : " << zipPath_str << std::endl;
-			LogBrowserWindow.printLog(mZlib.str2qstr("<font color = 'red'><b> error to uncompressed : </b></font>" + std::string(zipPath_str)));
-			LogBrowserWindow.printError(mZlib.str2qstr("<font color = 'red'><b> error to uncompressed : </b></font>" + std::string(zipPath_str)));
+			LogBrowserWindow.printLog(mZlib.str2qstr("<font color = 'red'><b> error to uncompress : </b></font>" + std::string(zipPath_str)));
+			LogBrowserWindow.printError(mZlib.str2qstr("<font color = 'red'><b> error to uncompress : </b></font>" + std::string(zipPath_str)));
 		}
 
 		if (succd)
