@@ -6,4 +6,4 @@
 
 ## 环境：QT5，C++，ITK3.4，zlib
 
-## 作者： 黄biubiu
+## 作者： 黄biubiu，欢迎交流
