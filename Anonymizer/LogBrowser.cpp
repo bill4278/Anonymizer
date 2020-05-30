@@ -23,9 +23,11 @@ void LogBrowser::closeEvent(QCloseEvent *event)
 
 	if (button == QMessageBox::No) {
 		event->ignore(); 
+		is_open = true;
 	}
 	else if (button == QMessageBox::Yes) {
 		event->accept();  
+		is_open = false;
 	}
 
 }

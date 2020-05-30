@@ -41,7 +41,10 @@ void Anonymizer::closeEvent(QCloseEvent *event)
 		event->ignore();
 	}
 	else if (button == QMessageBox::Yes) {
-		LogBrowserWindow.close();
+		if (LogBrowserWindow.is_open)
+		{
+			LogBrowserWindow.close();
+		}		
 		event->accept();
 	}
 }
@@ -259,21 +262,8 @@ void Anonymizer::anonymizeZip(QString folderChoose, QFileInfoList zipList)
 {
 	QString createUnzipDir = folderChoose + "/unzip_temp/";
 	QDir dir;
-	if (!dir.exists(createUnzipDir))
-	{
-		bool res = dir.mkdir(createUnzipDir);
-		if (res) 
-		{
-			std::cout << "create folder: " << createUnzipDir.toStdString() << std::endl;
-			LogBrowserWindow.printLog(mZlib.str2qstr("<font color = '#389fff'>create folder: </font>" + createUnzipDir.toStdString()));
-		}
-	}
-	else
-	{
-		dir.rmdir(createUnzipDir);
-	}
 
-	
+		
 	std::string createUnzipDir_str = mZlib.qstr2str(createUnzipDir);
 	const char *uncompressPath_char = createUnzipDir_str.c_str();
 	std::cout << uncompressPath_char << std::endl;
@@ -293,6 +283,20 @@ void Anonymizer::anonymizeZip(QString folderChoose, QFileInfoList zipList)
 	}
 	for (int i = 0; i != zipList.size(); i++)
 	{
+		if (!dir.exists(createUnzipDir))
+		{
+			bool res = dir.mkdir(createUnzipDir);
+			if (res)
+			{
+				std::cout << "create folder: " << createUnzipDir.toStdString() << std::endl;
+				LogBrowserWindow.printLog(mZlib.str2qstr("<font color = '#389fff'>create folder: </font>" + createUnzipDir.toStdString()));
+			}
+		}
+		else
+		{
+			dir.rmdir(createUnzipDir);
+		}
+
 		QApplication::processEvents();
 		ui.progressBar_2->setValue(100 * (i + 1) / zipList.size());
 		std::string zipPath_str = zipList.at(i).absoluteFilePath().toStdString();
@@ -310,39 +314,55 @@ void Anonymizer::anonymizeZip(QString folderChoose, QFileInfoList zipList)
 			LogBrowserWindow.printError(mZlib.str2qstr("<font color = 'red'><b> error to uncompress : </b></font>" + std::string(zipPath_str)));
 		}
 
+		QFileInfoList zipDcmList;
+
 		if (succd)
 		{
 			nameFiltersDcm << "*.dcm";
-			QFileInfoList zipDcmList = getFileList(uncompressPath_char, nameFiltersDcm);
-			DCMTK_anonymizeDcm(uncompressPath_char, zipDcmList);
-			
-		
-
-			nameFiltersAllSuffix << "*.*";
-			QFileInfoList zipFileList = getFileList(uncompressPath_char, nameFiltersAllSuffix);
-		
-			mZlib.Compress(zipFileList, compressPath_char, uncompressPath_char);
-		}
-		QDir d(uncompressPath_char);
-		d.setFilter(QDir::Files);
-		int j, k = d.count() - 1;
-		for (j = 0;j <= k;j++)
-		{
-			if (! d.remove(d[j]))
+			zipDcmList = getFileList(uncompressPath_char, nameFiltersDcm);
+			if (zipDcmList.size() == 0)
 			{
-				LogBrowserWindow.printLog(mZlib.str2qstr("<font color = 'red'><b> error to remove file: </b><font>") + d[j]);
-				LogBrowserWindow.printError(mZlib.str2qstr("<font color = 'red'><b> error to remove file: </b><font>") + d[j]);
+				ui.progressBar->setValue(100);
+			}
+			else
+			{
+				DCMTK_anonymizeDcm(uncompressPath_char, zipDcmList);
+
+
+
+
+
+				nameFiltersAllSuffix << "*.*";
+				QFileInfoList zipFileList = getFileList(uncompressPath_char, nameFiltersAllSuffix);
+
+				mZlib.Compress(zipFileList, compressPath_char, uncompressPath_char);
 			}
 		}
 		
-		std::cout << "removed temp files" << std::endl;
-		LogBrowserWindow.printLog(mZlib.str2qstr("<font color = '#389fff'>removed temp files</font>"));
+// 		d.setFilter(QDir::Files);
+// 		int j, k = d.count() - 1;
+// 		for (j = 0;j <= k;j++)
+// 		{
+// 			if (! d.remove(d[j]))
+// 			{
+// 				LogBrowserWindow.printLog(mZlib.str2qstr("<font color = 'red'><b> error to remove file: </b><font>") + d[j]);
+// 				LogBrowserWindow.printError(mZlib.str2qstr("<font color = 'red'><b> error to remove file: </b><font>") + d[j]);
+// 			}
+// 		}
+		QDir d(uncompressPath_char);
+		if (d.removeRecursively())
+		{
+			std::cout << "removed temp files" << std::endl;
+			LogBrowserWindow.printLog(mZlib.str2qstr("<font color = '#389fff'>removed temp files</font>"));
+		}
 
-		removeFile(zipPath_str.c_str());
-		renameFile(compressPath_char, zipPath_str.c_str());
-
+		if (zipDcmList.size() != 0)
+		{
+			removeFile(zipPath_str.c_str());
+			renameFile(compressPath_char, zipPath_str.c_str());
+		}
 	}
-	dir.rmdir(uncompressPath_char);// this method only suitable for empty folder
+	//dir.rmdir(uncompressPath_char);// this method only suitable for empty folder
 }
 
 void Anonymizer::anonymizeNoSuffix(QString folderChoose)

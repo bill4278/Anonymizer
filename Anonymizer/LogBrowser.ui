@@ -16,6 +16,9 @@
   <property name="windowTitle">
    <string>LogBrowser</string>
   </property>
+  <property name="autoFillBackground">
+   <bool>false</bool>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QTextBrowser" name="logTextBrowser">
     <property name="geometry">
