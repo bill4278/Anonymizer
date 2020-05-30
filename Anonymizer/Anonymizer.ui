@@ -10,7 +10,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>606</width>
+    <width>600</width>
     <height>455</height>
    </rect>
   </property>
@@ -18,7 +18,7 @@
    <bool>false</bool>
   </property>
   <property name="windowTitle">
-   <string>Anonymizer 1.4</string>
+   <string>Anonymizer 1.5</string>
   </property>
   <property name="autoFillBackground">
    <bool>true</bool>
@@ -157,13 +157,74 @@
      <string>Step 3: anonymize nosuffix files</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="pushButton_5">
+    <property name="geometry">
+     <rect>
+      <x>560</x>
+      <y>160</y>
+      <width>20</width>
+      <height>141</height>
+     </rect>
+    </property>
+    <property name="layoutDirection">
+     <enum>Qt::LeftToRight</enum>
+    </property>
+    <property name="text">
+     <string>
+s
+h
+o
+w
+
+l
+o
+g
+</string>
+    </property>
+   </widget>
+   <widget class="QTextBrowser" name="logTextBrowser">
+    <property name="geometry">
+     <rect>
+      <x>610</x>
+      <y>50</y>
+      <width>501</width>
+      <height>191</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QTextBrowser" name="errorTextBrowser">
+    <property name="geometry">
+     <rect>
+      <x>610</x>
+      <y>280</y>
+      <width>501</width>
+      <height>111</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>610</x>
+      <y>260</y>
+      <width>101</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Error List: </string>
+    </property>
+    <property name="textFormat">
+     <enum>Qt::AutoText</enum>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>606</width>
+     <width>600</width>
      <height>23</height>
     </rect>
    </property>

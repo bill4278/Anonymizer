@@ -22,7 +22,7 @@ public:
 	void printLog(QString logQStr);
 	void printError(QString errQStr);
 	Ui::LogBrowser ui;
-	bool is_open = true;
+	bool is_open = false;
 
 private:
 	void closeEvent(QCloseEvent *event);//函数重写。重写基类函数

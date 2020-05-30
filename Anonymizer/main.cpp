@@ -1,5 +1,4 @@
 #include "Anonymizer.h"
-#include "LogBrowser.h"
 #include <QtWidgets/QApplication>
 
 
@@ -32,12 +31,7 @@ int main(int argc, char *argv[])
 		//AnonymizerMainWindow.close();
 
 	}
-	else
-	{
-		AnonymizerMainWindow.LogBrowserWindow.setWindowFlags(AnonymizerMainWindow.LogBrowserWindow.windowFlags()&~Qt::WindowMaximizeButtonHint);    // 禁止最大化按钮
-		AnonymizerMainWindow.LogBrowserWindow.setFixedSize(AnonymizerMainWindow.LogBrowserWindow.width(), AnonymizerMainWindow.LogBrowserWindow.height());                     // 禁止拖动窗口大小
-		AnonymizerMainWindow.LogBrowserWindow.show();
-	}
+
 
 	return a.exec();
 }

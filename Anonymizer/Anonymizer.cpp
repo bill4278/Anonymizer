@@ -10,6 +10,9 @@
 
 // https://itk.org/Doxygen/html/Examples_2IO_2DicomImageReadChangeHeaderWrite_8cxx-example.html
 // https://bbs.csdn.net/topics/394710257  font color
+//https://zhuanlan.zhihu.com/p/91143055 ¿¨¶Ù
+//https://blog.csdn.net/guo88455648/article/details/82736202
+
 
 Anonymizer::Anonymizer(QWidget *parent)
 	: QMainWindow(parent)
@@ -27,7 +30,26 @@ void Anonymizer::setupConnection()
 	connect(ui.pushButton_2, SIGNAL(clicked()), this, SLOT(slot_btn_chooseFolderForDcm()));
 	connect(ui.pushButton_3, SIGNAL(clicked()), this, SLOT(slot_btn_chooseFolderForZip()));
 	connect(ui.pushButton_4, SIGNAL(clicked()), this, SLOT(slot_btn_chooseFolderForNoSuffix()));
+	connect(ui.pushButton_5, SIGNAL(clicked()), this, SLOT(slot_btn_collpaseLogBrowser()));
 
+}
+
+
+void Anonymizer::slot_btn_collpaseLogBrowser()
+{
+	QApplication::processEvents();
+	if (is_logBrowserCollpased)
+	{
+		setFixedSize(1124, 455);
+		ui.pushButton_5->setText("\nh\ni\nd\ne\n\nl\no\ng\n");
+		is_logBrowserCollpased = false;
+	}
+	else
+	{
+		setFixedSize(600, 455);
+		ui.pushButton_5->setText("\ns\nh\no\nw\n\nl\no\ng\n");
+		is_logBrowserCollpased = true;
+	}
 }
 
 void Anonymizer::closeEvent(QCloseEvent *event)
@@ -41,14 +63,21 @@ void Anonymizer::closeEvent(QCloseEvent *event)
 		event->ignore();
 	}
 	else if (button == QMessageBox::Yes) {
-		if (LogBrowserWindow.is_open)
-		{
-			LogBrowserWindow.close();
-		}		
+	
 		event->accept();
 	}
 }
 
+
+void Anonymizer::printLog(QString logQStr)
+{
+	ui.logTextBrowser->append(logQStr);
+}
+
+void Anonymizer::printError(QString errQStr)
+{
+	ui.errorTextBrowser->append(errQStr);
+}
 
 QFileInfoList Anonymizer::getFileList(QString folderChoose , QStringList nameFilters)
 {
@@ -74,11 +103,11 @@ void Anonymizer::removeFile(const char * filePath)
 	if (std::remove(filePath) == -1)
 	{
 		std::cout << "Error: " << strerror(errno) << std::endl;
-		LogBrowserWindow.printLog(mZlib.str2qstr("<font color = 'red'><b> error to remove: </b></font>") + mZlib.str2qstr(std::string(filePath)));
-		LogBrowserWindow.printLog(mZlib.str2qstr(strerror(errno)));
+		printLog(mZlib.str2qstr("<font color = 'red'><b> error to remove: </b></font>") + mZlib.str2qstr(std::string(filePath)));
+		printLog(mZlib.str2qstr(strerror(errno)));
 
-		LogBrowserWindow.printError(mZlib.str2qstr("<font color = 'red'><b> error to remove: </b></font>") + mZlib.str2qstr(filePath));
-		LogBrowserWindow.printError(mZlib.str2qstr(strerror(errno)));
+		printError(mZlib.str2qstr("<font color = 'red'><b> error to remove: </b></font>") + mZlib.str2qstr(filePath));
+		printError(mZlib.str2qstr(strerror(errno)));
 	}
 }
 
@@ -87,11 +116,11 @@ void Anonymizer::renameFile(const char * oldFilePath, const char * newFileName)
 	if (std::rename(oldFilePath, newFileName) == -1)
 	{
 		std::cout << "Error: " << strerror(errno) << std::endl;
-		LogBrowserWindow.printLog(mZlib.str2qstr("<font color = 'red'><b> error to rename: </b></font>") + mZlib.str2qstr(std::string(oldFilePath)));
-		LogBrowserWindow.printLog(mZlib.str2qstr(strerror(errno)));
+		printLog(mZlib.str2qstr("<font color = 'red'><b> error to rename: </b></font>") + mZlib.str2qstr(std::string(oldFilePath)));
+		printLog(mZlib.str2qstr(strerror(errno)));
 
-		LogBrowserWindow.printError(mZlib.str2qstr("<font color = 'red'><b> error to rename: </b></font>") + mZlib.str2qstr(oldFilePath));
-		LogBrowserWindow.printError(mZlib.str2qstr(strerror(errno)));
+		printError(mZlib.str2qstr("<font color = 'red'><b> error to rename: </b></font>") + mZlib.str2qstr(oldFilePath));
+		printError(mZlib.str2qstr(strerror(errno)));
 	}
 }
 
@@ -141,7 +170,7 @@ void Anonymizer::renameFile(const char * oldFilePath, const char * newFileName)
 // 			std::cerr << "ExceptionObject Caught" << std::endl;
 // 			std::cerr << err << std::endl;
 // 			std::cout << "can not read file: " << dcmPath_char << std::endl;
-// 			//LogBrowserWindow.printLog(mZlib.str2qstr("can not read file: "+ std::string(dcmPath_char)));
+// 			//printLog(mZlib.str2qstr("can not read file: "+ std::string(dcmPath_char)));
 // 		}
 // 		
 // 		ImageType::Pointer inputImage = reader->GetOutput();
@@ -159,11 +188,11 @@ void Anonymizer::renameFile(const char * oldFilePath, const char * newFileName)
 // 			std::cerr << "ExceptionObject Caught" << std::endl;
 // 			std::cerr << err << std::endl;
 // 			std::cout << dcmPath_char << "anonymize failed !!!!!" << std::endl;
-// 			//LogBrowserWindow.printLog(mZlib.str2qstr(std::string(dcmPath_char) + "anonymize failed !!!!!"));
+// 			//printLog(mZlib.str2qstr(std::string(dcmPath_char) + "anonymize failed !!!!!"));
 // 		}
 // 
 // 		std::cout << dcmPath_char<< "  anonymized" << std::endl;
-// 		//LogBrowserWindow.printLog(mZlib.str2qstr(std::string(dcmPath_char) + "  anonymized"));
+// 		//printLog(mZlib.str2qstr(std::string(dcmPath_char) + "  anonymized"));
 // 	}
 // 	/*QStringList files = dir.entryList(nameFilters, QDir::Files | QDir::Readable, QDir::Name);
 // 	DcmFileFormat fileformat;
@@ -187,7 +216,7 @@ void Anonymizer::DCMTK_anonymizeDcm(QString folderChoose, QFileInfoList dcmList)
 		if (res)
 		{
 			std::cout << "create folder: " << createDir.toStdString() << std::endl;
-			LogBrowserWindow.printLog(mZlib.str2qstr("<font color = '#389fff'>create folder</font>: " + createDir.toStdString()));
+			printLog(mZlib.str2qstr("<font color = '#389fff'>create folder</font>: " + createDir.toStdString()));
 		}
 	}
 	else
@@ -215,7 +244,7 @@ void Anonymizer::DCMTK_anonymizeDcm(QString folderChoose, QFileInfoList dcmList)
 		if (status.good())
 		{
 			std::cout << "loading: "<< dcmPath_char << std::endl;
-			LogBrowserWindow.printLog(mZlib.str2qstr("<font color = '#389fff'>loading: </font>" + std::string(dcmPath_char)));
+			printLog(mZlib.str2qstr("<font color = '#389fff'>loading: </font>" + std::string(dcmPath_char)));
 		
 			DcmDataset * dataset = fileformat.getDataset();
 			dataset->putAndInsertString(DCM_PatientName, "Anonymous");
@@ -226,8 +255,8 @@ void Anonymizer::DCMTK_anonymizeDcm(QString folderChoose, QFileInfoList dcmList)
 		}
 		else
 		{
-			LogBrowserWindow.printLog(mZlib.str2qstr("<font color = 'red'><b> error to load: </b></font>") + mZlib.str2qstr(std::string(dcmPath_char)));
-			LogBrowserWindow.printError(mZlib.str2qstr("<font color = 'red'><b> error to load: </b></font>") + mZlib.str2qstr(std::string(dcmPath_char)));
+			printLog(mZlib.str2qstr("<font color = 'red'><b> error to load: </b></font>") + mZlib.str2qstr(std::string(dcmPath_char)));
+			printError(mZlib.str2qstr("<font color = 'red'><b> error to load: </b></font>") + mZlib.str2qstr(std::string(dcmPath_char)));
 		}
 		status = fileformat.saveFile(zlib.qstr2str(createDir+"temp.dcm").c_str());
 		removeFile(dcmPath_char);
@@ -236,24 +265,24 @@ void Anonymizer::DCMTK_anonymizeDcm(QString folderChoose, QFileInfoList dcmList)
 		if (status.good())
 		{
 			std::cout << "anonymized: " << dcmPath_char << std::endl;
-			LogBrowserWindow.printLog(mZlib.str2qstr("<font color = '#389fff'><b>anonymized: </b></font>" + std::string(dcmPath_char)));
+			printLog(mZlib.str2qstr("<font color = '#389fff'><b>anonymized: </b></font>" + std::string(dcmPath_char)));
 		}
 		else
 		{
-			LogBrowserWindow.printLog(mZlib.str2qstr("<font color = 'red'><b> error to anonymize: </b></font>") + mZlib.str2qstr(std::string(dcmPath_char)));
-			LogBrowserWindow.printError(mZlib.str2qstr("<font color = 'red'><b> error to anonymize: </b></font>") + mZlib.str2qstr(std::string(dcmPath_char)));
+			printLog(mZlib.str2qstr("<font color = 'red'><b> error to anonymize: </b></font>") + mZlib.str2qstr(std::string(dcmPath_char)));
+			printError(mZlib.str2qstr("<font color = 'red'><b> error to anonymize: </b></font>") + mZlib.str2qstr(std::string(dcmPath_char)));
 		}
 
 		
 	}
 	if (dir.rmdir(createDir))
 	{
-		LogBrowserWindow.printLog(mZlib.str2qstr("<font color = '#389fff'>remove folder: </font>" + mZlib.qstr2str(createDir)));
+		printLog(mZlib.str2qstr("<font color = '#389fff'>remove folder: </font>" + mZlib.qstr2str(createDir)));
 	}
 	else
 	{
-		LogBrowserWindow.printLog(mZlib.str2qstr("<font color = 'red'><b> error to remove folder: </b></font>" + mZlib.qstr2str(createDir)));
-		LogBrowserWindow.printError(mZlib.str2qstr("<font color = 'red'><b> error to remove folder: </b></font>" + mZlib.qstr2str(createDir)));
+		printLog(mZlib.str2qstr("<font color = 'red'><b> error to remove folder: </b></font>" + mZlib.qstr2str(createDir)));
+		printError(mZlib.str2qstr("<font color = 'red'><b> error to remove folder: </b></font>" + mZlib.qstr2str(createDir)));
 	}
 	
 }
@@ -289,7 +318,7 @@ void Anonymizer::anonymizeZip(QString folderChoose, QFileInfoList zipList)
 			if (res)
 			{
 				std::cout << "create folder: " << createUnzipDir.toStdString() << std::endl;
-				LogBrowserWindow.printLog(mZlib.str2qstr("<font color = '#389fff'>create folder: </font>" + createUnzipDir.toStdString()));
+				printLog(mZlib.str2qstr("<font color = '#389fff'>create folder: </font>" + createUnzipDir.toStdString()));
 			}
 		}
 		else
@@ -305,13 +334,13 @@ void Anonymizer::anonymizeZip(QString folderChoose, QFileInfoList zipList)
 		if (succd == 1)
 		{
 			std::cout << "uncompressed : " << zipPath_str << std::endl;
-			LogBrowserWindow.printLog(mZlib.str2qstr("<font color = '#389fff'>uncompressed: </font>" + std::string(zipPath_str)));
+			printLog(mZlib.str2qstr("<font color = '#389fff'>uncompressed: </font>" + std::string(zipPath_str)));
 		}
 		else
 		{
 			std::cout << "!!!!!  failed uncompressed : " << zipPath_str << std::endl;
-			LogBrowserWindow.printLog(mZlib.str2qstr("<font color = 'red'><b> error to uncompress : </b></font>" + std::string(zipPath_str)));
-			LogBrowserWindow.printError(mZlib.str2qstr("<font color = 'red'><b> error to uncompress : </b></font>" + std::string(zipPath_str)));
+			printLog(mZlib.str2qstr("<font color = 'red'><b> error to uncompress : </b></font>" + std::string(zipPath_str)));
+			printError(mZlib.str2qstr("<font color = 'red'><b> error to uncompress : </b></font>" + std::string(zipPath_str)));
 		}
 
 		QFileInfoList zipDcmList;
@@ -345,15 +374,15 @@ void Anonymizer::anonymizeZip(QString folderChoose, QFileInfoList zipList)
 // 		{
 // 			if (! d.remove(d[j]))
 // 			{
-// 				LogBrowserWindow.printLog(mZlib.str2qstr("<font color = 'red'><b> error to remove file: </b><font>") + d[j]);
-// 				LogBrowserWindow.printError(mZlib.str2qstr("<font color = 'red'><b> error to remove file: </b><font>") + d[j]);
+// 				printLog(mZlib.str2qstr("<font color = 'red'><b> error to remove file: </b><font>") + d[j]);
+// 				printError(mZlib.str2qstr("<font color = 'red'><b> error to remove file: </b><font>") + d[j]);
 // 			}
 // 		}
 		QDir d(uncompressPath_char);
 		if (d.removeRecursively())
 		{
 			std::cout << "removed temp files" << std::endl;
-			LogBrowserWindow.printLog(mZlib.str2qstr("<font color = '#389fff'>removed temp files</font>"));
+			printLog(mZlib.str2qstr("<font color = '#389fff'>removed temp files</font>"));
 		}
 
 		if (zipDcmList.size() != 0)
@@ -383,7 +412,7 @@ void Anonymizer::anonymizeNoSuffix(QString folderChoose)
 			NoSuffixList.append(AllFilesList.at(i));
 			std::string NoSuffixPath_str = AllFilesList.at(i).absoluteFilePath().toStdString();
 			std::cout <<"found no suffix file: "<< NoSuffixPath_str << std::endl;
-			LogBrowserWindow.printLog(mZlib.str2qstr("<font color='#389fff'>found no suffix file: </font>" + NoSuffixPath_str));
+			printLog(mZlib.str2qstr("<font color='#389fff'>found no suffix file: </font>" + NoSuffixPath_str));
 		}
 	}
 	if (NoSuffixList.size() == 0)
@@ -408,8 +437,8 @@ void Anonymizer::slot_btn_chooseFolder()
 	QString folderChoose = fileDialog->getExistingDirectory();
 	if (folderChoose != NULL)
 	{
-		LogBrowserWindow.ui.logTextBrowser->clear();
-		LogBrowserWindow.ui.errorTextBrowser->clear();
+		ui.logTextBrowser->clear();
+		ui.errorTextBrowser->clear();
 
 		ui.label_3->setText("<font color='#389fff'><b>Processing ...</b></font>");
 		ui.label_4->setText("");
@@ -448,8 +477,8 @@ void Anonymizer::slot_btn_chooseFolderForDcm()
 	if (folderChoose != NULL)
 	{
 
-		LogBrowserWindow.ui.logTextBrowser->clear();
-		LogBrowserWindow.ui.errorTextBrowser->clear();
+		ui.logTextBrowser->clear();
+		ui.errorTextBrowser->clear();
 
 		ui.label_3->setText("<font color='#389fff'><b>Processing ...</b></font>");
 		ui.label_4->setText("");
@@ -485,8 +514,8 @@ void Anonymizer::slot_btn_chooseFolderForZip()
 	if (folderChoose != NULL)
 	{
 
-		LogBrowserWindow.ui.logTextBrowser->clear();
-		LogBrowserWindow.ui.errorTextBrowser->clear();
+		ui.logTextBrowser->clear();
+		ui.errorTextBrowser->clear();
 
 		ui.label_3->setText("<font color='#389fff'><b>Processing ...</b></font>");
 		ui.label_4->setText("");
@@ -502,6 +531,7 @@ void Anonymizer::slot_btn_chooseFolderForZip()
 
 		nameFiltersZip << "*.zip";
 		QFileInfoList zipList = getFileList(folderChoose, nameFiltersZip);
+
 		anonymizeZip(folderChoose, zipList);
 
 
@@ -522,8 +552,8 @@ void Anonymizer::slot_btn_chooseFolderForNoSuffix()
 	if (folderChoose != NULL)
 	{
 
-		LogBrowserWindow.ui.logTextBrowser->clear();
-		LogBrowserWindow.ui.errorTextBrowser->clear();
+		ui.logTextBrowser->clear();
+		ui.errorTextBrowser->clear();
 
 		ui.label_3->setText("Processing...");
 		ui.label_3->setStyleSheet("color:#389fff;");

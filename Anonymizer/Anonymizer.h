@@ -7,13 +7,14 @@
 
 #include <QtWidgets/QMainWindow>
 #include "ui_Anonymizer.h"
-#include "LogBrowser.h"
 #include "compressAndUncompress.h"
 #include <QFileDialog>
 #include <QDir>
 #include <QFile>
 #include <QMessageBox>
 #include <QCloseEvent>
+//#include <QFuture>
+//#include <QtConcurrent>
 
 // #include "itkImage.h"
 // #include "itkImageFileReader.h"
@@ -23,11 +24,12 @@
 // #include "itkMetaImageIOFactory.h"
 // #include "itkMetaDataObject.h"
 
-
 #include "dcmtk/config/osconfig.h"
 #include "dcmtk/dcmdata/dctk.h"
 #include "dcmtk/dcmjpeg/djdecode.h"
 #include "dcmtk/dcmdata/dcrledrg.h"
+
+
 
 class Anonymizer : public QMainWindow
 {
@@ -38,28 +40,21 @@ public:
 
 	QFileDialog *fileDialog = new QFileDialog(this);
 
-	LogBrowser LogBrowserWindow;
 
 
 private:
 	Ui::mainWindow ui;
 
-// 	using ImageType = itk::Image<unsigned char, 3>;
-// 	using ReaderType = itk::ImageFileReader<ImageType>;
-// 	using WriterType = itk::ImageFileWriter<ImageType>;
-// 	using ImageIOType = itk::GDCMImageIO;
-// 	using DictionaryType = itk::MetaDataDictionary;
-
 	void setupConnection();
-	//void ITK_anonymizeDcm(QString folderChoose, QFileInfoList dcmList);
-	void anonymizeZip(QString folderChoose, QFileInfoList zipList);
-	void DCMTK_anonymizeDcm(QString folderChoose, QFileInfoList dcmList);
-	void anonymizeNoSuffix(QString folderChoose);
+
 
 
 	void removeFile(const char * filePath);
 	void renameFile(const char * oldFilePath, const char * newFileName);
-	//void anonymizeCore(DictionaryType &dictionary);
+	bool is_logBrowserCollpased = true;
+	void printLog(QString logQStr);
+	void printError(QString errQStr);
+
 	QFileInfoList getFileList(QString folderChoose, QStringList nameFilters);
 
 
@@ -94,11 +89,19 @@ private:
 	
 	CZlib mZlib;
 
+
+
 private slots:
 	void slot_btn_chooseFolder();
 	void slot_btn_chooseFolderForDcm();
 	void slot_btn_chooseFolderForZip();
 	void slot_btn_chooseFolderForNoSuffix();
+	void slot_btn_collpaseLogBrowser();
 
 	void closeEvent(QCloseEvent *event);
+	
+	void anonymizeZip(QString folderChoose, QFileInfoList zipList);
+	void DCMTK_anonymizeDcm(QString folderChoose, QFileInfoList dcmList);
+	void anonymizeNoSuffix(QString folderChoose);
+
 };

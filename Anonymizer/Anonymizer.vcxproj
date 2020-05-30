@@ -38,7 +38,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>D:\Qt\Qt5.12.3\5.12.3\msvc2015_64\include;D:\Program\Tools\DCMTK\Install_Debug\include;D:\Program\Tools\ITK_4_8_2\Install_Debug\include\ITK-4.8;D:\Program\Tools\zlib-1.2.11;D:\Program\Tools\zlib-1.2.11\contrib\minizip;$(IncludePath)</IncludePath>
+    <IncludePath>D:\Qt\Qt5.12.3\5.12.3\msvc2015_64\include;D:\Program\Tools\DCMTK\Install_Debug\include;D:\Program\Tools\ITK_4_8_2\Install_Debug\include\ITK-4.8;D:\Program\Tools\zlib-1.2.11;D:\Program\Tools\zlib-1.2.11\contrib\minizip;D:\Qt\Qt5.12.3\5.12.3\msvc2015_64\include\QtConcurrent;$(IncludePath)</IncludePath>
     <LibraryPath>D:\Program\Tools\DCMTK\Install_Debug\lib;D:\Program\Tools\ITK_4_8_2\Install_Debug\lib;D:\Program\Tools\zlib-1.2.11\contrib\vstudio\vc14\x64\ZlibDllDebug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -93,7 +93,6 @@
   <ItemGroup>
     <ClCompile Include="Anonymizer.cpp" />
     <ClCompile Include="compressAndUncompress.cpp" />
-    <ClCompile Include="LogBrowser.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -108,7 +107,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="compressAndUncompress.h" />
-    <QtMoc Include="LogBrowser.h" />
     <ClInclude Include="testZip.h" />
   </ItemGroup>
   <ItemGroup>
