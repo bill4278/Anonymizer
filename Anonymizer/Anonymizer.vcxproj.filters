@@ -34,9 +34,21 @@
     <ClCompile Include="compressAndUncompress.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Thread_DCMTK_anonymizeDCM.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Thread_anonymizeZip.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Thread_anonymizeNoSuffix.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="Anonymizer.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Thread_DCMTK_anonymizeDCM.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>
@@ -58,6 +70,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="compressAndUncompress.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Thread_anonymizeZip.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Thread_anonymizeNoSuffix.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

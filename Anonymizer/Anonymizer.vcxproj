@@ -91,9 +91,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Thread_anonymizeNoSuffix.cpp" />
     <ClCompile Include="Anonymizer.cpp" />
     <ClCompile Include="compressAndUncompress.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Thread_anonymizeZip.cpp" />
+    <ClCompile Include="Thread_DCMTK_anonymizeDCM.cpp" />
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="Anonymizer.h" />
@@ -106,8 +109,11 @@
     <QtRcc Include="Anonymizer.qrc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Thread_anonymizeNoSuffix.h" />
     <ClInclude Include="compressAndUncompress.h" />
     <ClInclude Include="testZip.h" />
+    <ClInclude Include="Thread_anonymizeZip.h" />
+    <QtMoc Include="Thread_DCMTK_anonymizeDCM.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Anonymizer.ico" />
