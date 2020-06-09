@@ -55,6 +55,14 @@ private:
 	void printLog(QString logQStr);
 	void printError(QString errQStr);
 
+	void anonymizeZip(QString folderChoose, QFileInfoList zipList);
+	void DCMTK_anonymizeDcm(QString folderChoose, QFileInfoList dcmList);
+	void anonymizeNoSuffix(QString folderChoose);
+
+	void processingUi();
+	void finishUi();
+
+
 	QFileInfoList getFileList(QString folderChoose, QStringList nameFilters);
 
 
@@ -92,16 +100,16 @@ private:
 
 
 private slots:
+	void slot_btn_chooseFile();
 	void slot_btn_chooseFolder();
 	void slot_btn_chooseFolderForDcm();
 	void slot_btn_chooseFolderForZip();
 	void slot_btn_chooseFolderForNoSuffix();
 	void slot_btn_collpaseLogBrowser();
-
+	void slot_showAbout();
+	void slot_showAboutQt();
 	void closeEvent(QCloseEvent *event);
 	
-	void anonymizeZip(QString folderChoose, QFileInfoList zipList);
-	void DCMTK_anonymizeDcm(QString folderChoose, QFileInfoList dcmList);
-	void anonymizeNoSuffix(QString folderChoose);
+
 
 };

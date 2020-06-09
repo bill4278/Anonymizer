@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 	
 
 	QMessageBox *msgBox;
-	msgBox = new QMessageBox("FYI :",		///--这里是设置消息框标题
+	msgBox = new QMessageBox("Warning :",		///--这里是设置消息框标题
 		"make sure you have closed files which need to be anonymized and no Chinese characters in the path !", ///--这里是设置消息框显示的内容
 		QMessageBox::Warning,							///--这里是在消息框显示的图标
 		QMessageBox::Yes | QMessageBox::Default,		///---这里是显示消息框上的按钮情况

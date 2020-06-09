@@ -10,8 +10,8 @@
 
 // https://itk.org/Doxygen/html/Examples_2IO_2DicomImageReadChangeHeaderWrite_8cxx-example.html
 // https://bbs.csdn.net/topics/394710257  font color
-//https://zhuanlan.zhihu.com/p/91143055 ¿¨¶Ù
-//https://blog.csdn.net/guo88455648/article/details/82736202
+// https://zhuanlan.zhihu.com/p/91143055 ¿¨¶Ù
+// https://blog.csdn.net/guo88455648/article/details/82736202
 
 
 Anonymizer::Anonymizer(QWidget *parent)
@@ -26,28 +26,71 @@ Anonymizer::Anonymizer(QWidget *parent)
 void Anonymizer::setupConnection()
 {
 
-	connect(ui.pushButton, SIGNAL(clicked()), this, SLOT(slot_btn_chooseFolder()));
-	connect(ui.pushButton_2, SIGNAL(clicked()), this, SLOT(slot_btn_chooseFolderForDcm()));
-	connect(ui.pushButton_3, SIGNAL(clicked()), this, SLOT(slot_btn_chooseFolderForZip()));
-	connect(ui.pushButton_4, SIGNAL(clicked()), this, SLOT(slot_btn_chooseFolderForNoSuffix()));
-	connect(ui.pushButton_5, SIGNAL(clicked()), this, SLOT(slot_btn_collpaseLogBrowser()));
+	connect(ui.openFolderBtn, SIGNAL(clicked()), this, SLOT(slot_btn_chooseFolder()));
+	connect(ui.openFileBtn, SIGNAL(clicked()), this, SLOT(slot_btn_chooseFile()));
 
+	connect(ui.anoDcmBtn, SIGNAL(clicked()), this, SLOT(slot_btn_chooseFolderForDcm()));
+	connect(ui.anoZipBtn, SIGNAL(clicked()), this, SLOT(slot_btn_chooseFolderForZip()));
+	connect(ui.anoNofixBtn, SIGNAL(clicked()), this, SLOT(slot_btn_chooseFolderForNoSuffix()));
+	connect(ui.showLogBtn, SIGNAL(clicked()), this, SLOT(slot_btn_collpaseLogBrowser()));
+
+	connect(ui.actionAbout, SIGNAL(triggered()), this, SLOT(slot_showAbout()));
+	connect(ui.actionAbout_Qt, SIGNAL(triggered()), this, SLOT(slot_showAboutQt()));
 }
 
+void Anonymizer::processingUi()
+{
+	ui.logTextBrowser->clear();
+	ui.errorTextBrowser->clear();
+
+	ui.statusLabel->setText("<font color='#389fff'><b>Processing ...</b></font>");
+	ui.folderNameLabel->setText("");
+	ui.progressBar->setValue(0);
+	ui.progressBar_2->setValue(0);
+	ui.progressBar_3->setValue(0);
+
+	ui.openFolderBtn->setDisabled(true);
+	ui.openFileBtn->setDisabled(true);
+	ui.anoDcmBtn->setDisabled(true);
+	ui.anoZipBtn->setDisabled(true);
+	ui.anoNofixBtn->setDisabled(true);
+	ui.actionAbout->setDisabled(true);
+}
+
+void Anonymizer::finishUi()
+{
+	ui.statusLabel->setText("<font color='#389fff'><b>Finished !</b></font>");
+	ui.openFolderBtn->setDisabled(false);
+	ui.openFileBtn->setDisabled(false);
+	ui.anoDcmBtn->setDisabled(false);
+	ui.anoZipBtn->setDisabled(false);
+	ui.anoNofixBtn->setDisabled(false);
+	ui.actionAbout->setDisabled(false);
+}
+
+void Anonymizer::slot_showAbout()
+{
+	QMessageBox::about(this, tr("About"), tr(" https://github.com/bill4278/Anonymizer/  \n\n Email: bill4278@foxmail.com"));
+}
+
+void Anonymizer::slot_showAboutQt()
+{
+	QMessageBox::aboutQt(this, tr("About Qt"));
+}
 
 void Anonymizer::slot_btn_collpaseLogBrowser()
 {
 	QApplication::processEvents();
 	if (is_logBrowserCollpased)
 	{
-		setFixedSize(1124, 455);
-		ui.pushButton_5->setText("\nh\ni\nd\ne\n\nl\no\ng\n");
+		setFixedSize(1124, 462);
+		ui.showLogBtn->setText("\nh\ni\nd\ne\n¡¶\nl\no\ng\n");
 		is_logBrowserCollpased = false;
 	}
 	else
 	{
-		setFixedSize(600, 455);
-		ui.pushButton_5->setText("\ns\nh\no\nw\n\nl\no\ng\n");
+		setFixedSize(600, 462);
+		ui.showLogBtn->setText("\ns\nh\no\nw\n¡·\nl\no\ng\n");
 		is_logBrowserCollpased = true;
 	}
 }
@@ -77,6 +120,12 @@ void Anonymizer::printLog(QString logQStr)
 void Anonymizer::printError(QString errQStr)
 {
 	ui.errorTextBrowser->append(errQStr);
+	if (is_logBrowserCollpased)
+	{
+		setFixedSize(1124, 462);
+		ui.showLogBtn->setText("\nh\ni\nd\ne\n¡¶\nl\no\ng\n");
+		is_logBrowserCollpased = false;
+	}
 }
 
 QFileInfoList Anonymizer::getFileList(QString folderChoose , QStringList nameFilters)
@@ -236,12 +285,13 @@ void Anonymizer::DCMTK_anonymizeDcm(QString folderChoose, QFileInfoList dcmList)
 		std::string dcmPath_str = dcmList.at(i).absoluteFilePath().toStdString();
 		const char* dcmPath_char = dcmPath_str.c_str();
 
-		OFCondition status;
+		OFCondition loadStatus;
+		OFCondition saveStatus;
 		DcmFileFormat fileformat;
 		//https://www.cnblogs.com/bayzhang/p/5484321.html
 		DcmMetaInfo * metainfo;
-		status = fileformat.loadFile(dcmPath_char);
-		if (status.good())
+		loadStatus = fileformat.loadFile(dcmPath_char);
+		if (loadStatus.good())
 		{
 			std::cout << "loading: "<< dcmPath_char << std::endl;
 			printLog(mZlib.str2qstr("<font color = '#389fff'>loading: </font>" + std::string(dcmPath_char)));
@@ -252,26 +302,27 @@ void Anonymizer::DCMTK_anonymizeDcm(QString folderChoose, QFileInfoList dcmList)
 			dataset->putAndInsertString(DCM_PatientSex, "	");
 			dataset->putAndInsertString(DCM_PatientAge, "	");
 			dataset->putAndInsertString(DCM_PatientBirthDate, "	");
+			saveStatus = fileformat.saveFile(zlib.qstr2str(createDir + "temp.dcm").c_str());
+			removeFile(dcmPath_char);
+			renameFile(zlib.qstr2str(createDir + "temp.dcm").c_str(), dcmPath_char);
+
+			if (saveStatus.good())
+			{
+				std::cout << "anonymized: " << dcmPath_char << std::endl;
+				printLog(mZlib.str2qstr("<font color = '#389fff'><b>anonymized: </b></font>" + std::string(dcmPath_char)));
+			}
+			else
+			{
+				printLog(mZlib.str2qstr("<font color = 'red'><b> error to anonymize: </b></font>") + mZlib.str2qstr(std::string(dcmPath_char)));
+				printError(mZlib.str2qstr("<font color = 'red'><b> error to anonymize: </b></font>") + mZlib.str2qstr(std::string(dcmPath_char)));
+			}
 		}
 		else
 		{
 			printLog(mZlib.str2qstr("<font color = 'red'><b> error to load: </b></font>") + mZlib.str2qstr(std::string(dcmPath_char)));
 			printError(mZlib.str2qstr("<font color = 'red'><b> error to load: </b></font>") + mZlib.str2qstr(std::string(dcmPath_char)));
 		}
-		status = fileformat.saveFile(zlib.qstr2str(createDir+"temp.dcm").c_str());
-		removeFile(dcmPath_char);
-		renameFile(zlib.qstr2str(createDir + "temp.dcm").c_str(), dcmPath_char);
-		
-		if (status.good())
-		{
-			std::cout << "anonymized: " << dcmPath_char << std::endl;
-			printLog(mZlib.str2qstr("<font color = '#389fff'><b>anonymized: </b></font>" + std::string(dcmPath_char)));
-		}
-		else
-		{
-			printLog(mZlib.str2qstr("<font color = 'red'><b> error to anonymize: </b></font>") + mZlib.str2qstr(std::string(dcmPath_char)));
-			printError(mZlib.str2qstr("<font color = 'red'><b> error to anonymize: </b></font>") + mZlib.str2qstr(std::string(dcmPath_char)));
-		}
+
 
 		
 	}
@@ -432,26 +483,55 @@ void Anonymizer::anonymizeNoSuffix(QString folderChoose)
 
 }
 
+void Anonymizer::slot_btn_chooseFile()
+{
+	QString filePath = fileDialog->getOpenFileName();
+	if (filePath != NULL)
+	{
+		processingUi();
+
+		ui.folderNameLabel->setText(filePath);
+		if (filePath.contains(".zip"))
+		{
+			QFileInfoList fileList;
+			fileList.append(filePath);
+			QStringList filePathSegment = filePath.split("/");
+			QString fileFolder = filePathSegment[0];
+			for (int i = 1; i < filePathSegment.length()-1;i++)
+			{
+				fileFolder = fileFolder + "/" + filePathSegment[i];
+			}
+
+			anonymizeZip(fileFolder, fileList);
+
+		}
+		else
+		{
+			QFileInfoList fileList;
+			fileList.append(filePath);
+			QStringList filePathSegment = filePath.split("/");
+			QString fileFolder = filePathSegment[0];
+			for (int i = 1; i < filePathSegment.length() - 1;i++)
+			{
+				fileFolder = fileFolder + "/" + filePathSegment[i];
+			}
+
+
+			DCMTK_anonymizeDcm(fileFolder, fileList);
+		}
+
+		finishUi();
+	}
+}
+
 void Anonymizer::slot_btn_chooseFolder()
 {
 	QString folderChoose = fileDialog->getExistingDirectory();
 	if (folderChoose != NULL)
 	{
-		ui.logTextBrowser->clear();
-		ui.errorTextBrowser->clear();
+		processingUi();
 
-		ui.label_3->setText("<font color='#389fff'><b>Processing ...</b></font>");
-		ui.label_4->setText("");
-		ui.progressBar->setValue(0);
-		ui.progressBar_2->setValue(0);
-		ui.progressBar_3->setValue(0);
-
-		ui.pushButton->setDisabled(true);
-		ui.pushButton_2->setDisabled(true);
-		ui.pushButton_3->setDisabled(true);
-		ui.pushButton_4->setDisabled(true);
-
-		ui.label_4->setText(folderChoose);
+		ui.folderNameLabel->setText(folderChoose);
 		nameFiltersDcm << "*.dcm";
 		QFileInfoList dcmList = getFileList(folderChoose, nameFiltersDcm);
 		DCMTK_anonymizeDcm(folderChoose, dcmList);
@@ -460,11 +540,7 @@ void Anonymizer::slot_btn_chooseFolder()
 		anonymizeZip(folderChoose, zipList);
 		anonymizeNoSuffix(folderChoose);
 
-		ui.label_3->setText("<font color='#389fff'><b>Finished !</b></font>");
-		ui.pushButton->setDisabled(false);
-		ui.pushButton_2->setDisabled(false);
-		ui.pushButton_3->setDisabled(false);
-		ui.pushButton_4->setDisabled(false);
+		finishUi();
 	}
 
     
@@ -477,31 +553,15 @@ void Anonymizer::slot_btn_chooseFolderForDcm()
 	if (folderChoose != NULL)
 	{
 
-		ui.logTextBrowser->clear();
-		ui.errorTextBrowser->clear();
+		processingUi();
 
-		ui.label_3->setText("<font color='#389fff'><b>Processing ...</b></font>");
-		ui.label_4->setText("");
-		ui.progressBar->setValue(0);
-		ui.progressBar_2->setValue(0);
-		ui.progressBar_3->setValue(0);
-
-		ui.pushButton->setDisabled(true);
-		ui.pushButton_2->setDisabled(true);
-		ui.pushButton_3->setDisabled(true);
-		ui.pushButton_4->setDisabled(true);
-
-		ui.label_4->setText(folderChoose);
+		ui.folderNameLabel->setText(folderChoose);
 
 		nameFiltersDcm << "*.dcm";
 		QFileInfoList dcmList = getFileList(folderChoose, nameFiltersDcm);
 		DCMTK_anonymizeDcm(folderChoose, dcmList);
 
-		ui.label_3->setText("<font color='#389fff'><b>Finished !</b></font>");
-		ui.pushButton->setDisabled(false);
-		ui.pushButton_2->setDisabled(false);
-		ui.pushButton_3->setDisabled(false);
-		ui.pushButton_4->setDisabled(false);
+		finishUi();
 	}
 
 
@@ -514,20 +574,9 @@ void Anonymizer::slot_btn_chooseFolderForZip()
 	if (folderChoose != NULL)
 	{
 
-		ui.logTextBrowser->clear();
-		ui.errorTextBrowser->clear();
+		processingUi();
 
-		ui.label_3->setText("<font color='#389fff'><b>Processing ...</b></font>");
-		ui.label_4->setText("");
-		ui.progressBar->setValue(0);
-		ui.progressBar_2->setValue(0);
-		ui.progressBar_3->setValue(0);
-
-		ui.pushButton->setDisabled(true);
-		ui.pushButton_2->setDisabled(true);
-		ui.pushButton_3->setDisabled(true);
-		ui.pushButton_4->setDisabled(true);
-		ui.label_4->setText(folderChoose);
+		ui.folderNameLabel->setText(folderChoose);
 
 		nameFiltersZip << "*.zip";
 		QFileInfoList zipList = getFileList(folderChoose, nameFiltersZip);
@@ -535,11 +584,7 @@ void Anonymizer::slot_btn_chooseFolderForZip()
 		anonymizeZip(folderChoose, zipList);
 
 
-		ui.label_3->setText("<font color='#389fff'><b>Finished !</b></font>");
-		ui.pushButton->setDisabled(false);
-		ui.pushButton_2->setDisabled(false);
-		ui.pushButton_3->setDisabled(false);
-		ui.pushButton_4->setDisabled(false);
+		finishUi();
 	}
 
 
@@ -552,29 +597,13 @@ void Anonymizer::slot_btn_chooseFolderForNoSuffix()
 	if (folderChoose != NULL)
 	{
 
-		ui.logTextBrowser->clear();
-		ui.errorTextBrowser->clear();
+		processingUi();
 
-		ui.label_3->setText("Processing...");
-		ui.label_3->setStyleSheet("color:#389fff;");
-		ui.label_4->setText("");
-		ui.progressBar->setValue(0);
-		ui.progressBar_2->setValue(0);
-		ui.progressBar_3->setValue(0);
-
-		ui.pushButton->setDisabled(true);
-		ui.pushButton_2->setDisabled(true);
-		ui.pushButton_3->setDisabled(true);
-		ui.pushButton_4->setDisabled(true);
-		ui.label_4->setText(folderChoose);
+		ui.folderNameLabel->setText(folderChoose);
 
 		anonymizeNoSuffix(folderChoose);
 
-		ui.label_3->setText("<font color='#389fff'><b>Finished !</b></font>");
-		ui.pushButton->setDisabled(false);
-		ui.pushButton_2->setDisabled(false);
-		ui.pushButton_3->setDisabled(false);
-		ui.pushButton_4->setDisabled(false);
+		finishUi();
 	}
 
 
