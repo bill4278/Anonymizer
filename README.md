@@ -3,6 +3,7 @@
 ![image](https://github.com/bill4278/Anonymizer/blob/MergeLogBrowserIntoMainWindow/snapshot_1.6.gif)
 
 ## 工作需要写了一个用于匿名DICOM文件的工具，可以匿名普通dicom，压缩格式dicom，藏在zip压缩包里的dicom，以及没有后缀的dicom，旁边的logbrowser输出信息，底下的errorlist提示哪些文件可能损坏。
+## 现在它可以匿名任何它可以匿名的文件了。
 
 ## 环境：QT5，C++，ITK3.4，zlib
 
