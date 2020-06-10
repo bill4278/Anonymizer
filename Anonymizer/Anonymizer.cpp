@@ -1,7 +1,5 @@
-#include <iostream>
+﻿#include <iostream>
 #include "Anonymizer.h"
-
-//#include "testZip.h"
 #include "errno.h"
 
 #if _MSC_VER >=1600
@@ -10,9 +8,8 @@
 
 // https://itk.org/Doxygen/html/Examples_2IO_2DicomImageReadChangeHeaderWrite_8cxx-example.html
 // https://bbs.csdn.net/topics/394710257  font color
-// https://zhuanlan.zhihu.com/p/91143055 ����
+// https://zhuanlan.zhihu.com/p/91143055 卡顿
 // https://blog.csdn.net/guo88455648/article/details/82736202
-
 
 Anonymizer::Anonymizer(QWidget *parent)
 	: QMainWindow(parent)
@@ -23,19 +20,62 @@ Anonymizer::Anonymizer(QWidget *parent)
 
 }
 
+Anonymizer::~Anonymizer()
+{
+	if (m_objThreadForDcm != nullptr)
+	{
+		m_objThreadForDcm->quit();
+		m_objThreadForDcm->wait();
+		delete m_objThreadForDcm;
+		m_objThreadForDcm = nullptr;
+	}
+	if (m_objThreadForZip != nullptr)
+	{
+		m_objThreadForZip->quit();
+		m_objThreadForZip->wait();
+		delete m_objThreadForZip;
+		m_objThreadForZip = nullptr;
+	}
+	if (m_objThreadForNoSuf != nullptr)
+	{
+		m_objThreadForNoSuf->quit();
+		m_objThreadForNoSuf->wait();
+		delete m_objThreadForNoSuf;
+		m_objThreadForNoSuf = nullptr;
+	}
+}
+
+void Anonymizer::closeEvent(QCloseEvent *event)
+{
+	QMessageBox::StandardButton button;
+	button = QMessageBox::question(this, tr("quit anonymizer"),
+		QString(tr("Do you want to quit anonymizer ?")),
+		QMessageBox::Yes | QMessageBox::No);
+
+	if (button == QMessageBox::No) {
+		event->ignore();
+	}
+	else if (button == QMessageBox::Yes) {
+
+		event->accept();
+	}
+}
+
 void Anonymizer::setupConnection()
 {
-
-	connect(ui.openFolderBtn, SIGNAL(clicked()), this, SLOT(slot_btn_chooseFolder()));
-	connect(ui.openFileBtn, SIGNAL(clicked()), this, SLOT(slot_btn_chooseFile()));
 
 	connect(ui.anoDcmBtn, SIGNAL(clicked()), this, SLOT(slot_btn_chooseFolderForDcm()));
 	connect(ui.anoZipBtn, SIGNAL(clicked()), this, SLOT(slot_btn_chooseFolderForZip()));
 	connect(ui.anoNofixBtn, SIGNAL(clicked()), this, SLOT(slot_btn_chooseFolderForNoSuffix()));
-	connect(ui.showLogBtn, SIGNAL(clicked()), this, SLOT(slot_btn_collpaseLogBrowser()));
+	connect(ui.openFolderBtn, SIGNAL(clicked()), this, SLOT(slot_btn_chooseFolder()));
+	connect(ui.openFileBtn, SIGNAL(clicked()), this, SLOT(slot_btn_chooseFile()));
 
 	connect(ui.actionAbout, SIGNAL(triggered()), this, SLOT(slot_showAbout()));
 	connect(ui.actionAbout_Qt, SIGNAL(triggered()), this, SLOT(slot_showAboutQt()));
+
+	connect(ui.showLogBtn, SIGNAL(clicked()), this, SLOT(slot_btn_collpaseLogBrowser()));
+	
+
 }
 
 void Anonymizer::processingUi()
@@ -55,6 +95,7 @@ void Anonymizer::processingUi()
 	ui.anoZipBtn->setDisabled(true);
 	ui.anoNofixBtn->setDisabled(true);
 	ui.actionAbout->setDisabled(true);
+	ui.actionAbout_Qt->setDisabled(true);
 }
 
 void Anonymizer::finishUi()
@@ -66,51 +107,8 @@ void Anonymizer::finishUi()
 	ui.anoZipBtn->setDisabled(false);
 	ui.anoNofixBtn->setDisabled(false);
 	ui.actionAbout->setDisabled(false);
+	ui.actionAbout_Qt->setDisabled(false);
 }
-
-void Anonymizer::slot_showAbout()
-{
-	QMessageBox::about(this, tr("About"), tr(" https://github.com/bill4278/Anonymizer/  \n\n Email: bill4278@foxmail.com"));
-}
-
-void Anonymizer::slot_showAboutQt()
-{
-	QMessageBox::aboutQt(this, tr("About Qt"));
-}
-
-void Anonymizer::slot_btn_collpaseLogBrowser()
-{
-	QApplication::processEvents();
-	if (is_logBrowserCollpased)
-	{
-		setFixedSize(1124, 462);
-		ui.showLogBtn->setText("\nh\ni\nd\ne\n��\nl\no\ng\n");
-		is_logBrowserCollpased = false;
-	}
-	else
-	{
-		setFixedSize(600, 462);
-		ui.showLogBtn->setText("\ns\nh\no\nw\n��\nl\no\ng\n");
-		is_logBrowserCollpased = true;
-	}
-}
-
-void Anonymizer::closeEvent(QCloseEvent *event)
-{
-	QMessageBox::StandardButton button;
-	button = QMessageBox::question(this, tr("quit anonymizer"),
-		QString(tr("Do you want to quit anonymizer ?")),
-		QMessageBox::Yes | QMessageBox::No);
-
-	if (button == QMessageBox::No) {
-		event->ignore();
-	}
-	else if (button == QMessageBox::Yes) {
-	
-		event->accept();
-	}
-}
-
 
 void Anonymizer::printLog(QString logQStr)
 {
@@ -123,364 +121,292 @@ void Anonymizer::printError(QString errQStr)
 	if (is_logBrowserCollpased)
 	{
 		setFixedSize(1124, 462);
-		ui.showLogBtn->setText("\nh\ni\nd\ne\n��\nl\no\ng\n");
+		ui.showLogBtn->setText("\nh\ni\nd\ne\n<\nl\no\ng\n");
 		is_logBrowserCollpased = false;
 	}
 }
 
-QFileInfoList Anonymizer::getFileList(QString folderChoose , QStringList nameFilters)
+void Anonymizer::fatalError(QString fatalErr)
 {
-	QString message;
 
-	QDir dir(folderChoose);
-	QFileInfoList file_list = dir.entryInfoList( nameFilters, QDir::Files | QDir::Hidden | QDir::NoSymLinks);
-	QFileInfoList folder_list = dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
-
-	for (int i = 0; i != folder_list.size(); i++)
+	QMessageBox *msgBox;
+	msgBox = new QMessageBox("Fatal Error:",
+		fatalErr,
+		QMessageBox::Critical,
+		QMessageBox::Yes | QMessageBox::Default,
+		0,
+		0);
+	msgBox->show();
+	if (m_objThreadForDcm != nullptr)
 	{
-		QString filePath = folder_list.at(i).absoluteFilePath();
-		QFileInfoList child_file_list = getFileList(filePath, nameFilters);
-		file_list.append(child_file_list);
+		m_objThreadForDcm->quit();
+		m_objThreadForDcm->wait();
+		delete m_objThreadForDcm;
+	}
+	if (m_objThreadForZip != nullptr)
+	{
+		m_objThreadForZip->quit();
+		m_objThreadForZip->wait();
+		delete m_objThreadForZip;
 	}
 
-	return file_list;
+	if (msgBox->exec() == QMessageBox::Yes)
+	{
+		QApplication* app;
+		app->exit(0);
+	}
 
 }
 
-void Anonymizer::removeFile(const char * filePath)
+void Anonymizer::setProgressValue(const float value, const int bar_No)
 {
-	if (std::remove(filePath) == -1)
+	switch (bar_No)
 	{
-		std::cout << "Error: " << strerror(errno) << std::endl;
-		printLog(mZlib.str2qstr("<font color = 'red'><b> error to remove: </b></font>") + mZlib.str2qstr(std::string(filePath)));
-		printLog(mZlib.str2qstr(strerror(errno)));
-
-		printError(mZlib.str2qstr("<font color = 'red'><b> error to remove: </b></font>") + mZlib.str2qstr(filePath));
-		printError(mZlib.str2qstr(strerror(errno)));
+	case 1:
+		ui.progressBar->setValue(value);
+		break;
+	case 2:
+		ui.progressBar_2->setValue(value);
+		break;
+	case 3:
+		ui.progressBar_3->setValue(value);
+		break;
 	}
 }
 
-void Anonymizer::renameFile(const char * oldFilePath, const char * newFileName)
+void Anonymizer::getProgressFinished(const bool isFinish, const int process_No)
 {
-	if (std::rename(oldFilePath, newFileName) == -1)
+	isProgressFinish = isFinish;
+	if (isProgressFinish)
 	{
-		std::cout << "Error: " << strerror(errno) << std::endl;
-		printLog(mZlib.str2qstr("<font color = 'red'><b> error to rename: </b></font>") + mZlib.str2qstr(std::string(oldFilePath)));
-		printLog(mZlib.str2qstr(strerror(errno)));
-
-		printError(mZlib.str2qstr("<font color = 'red'><b> error to rename: </b></font>") + mZlib.str2qstr(oldFilePath));
-		printError(mZlib.str2qstr(strerror(errno)));
-	}
-}
-
-// void Anonymizer::anonymizeCore(DictionaryType &dictionary)
-// {
-// 	itk::EncapsulateMetaData<std::string>(dictionary, patientNameTag, patientName);
-// 	itk::EncapsulateMetaData<std::string>(dictionary, patientIDTag, patientID);
-// 	itk::EncapsulateMetaData<std::string>(dictionary, patientBirthDateTag, patientBirthDate);
-// 	itk::EncapsulateMetaData<std::string>(dictionary, patientBirthTimeTag, patientBirthTime);
-// 	itk::EncapsulateMetaData<std::string>(dictionary, patientSexTag, patientSex);
-// 	itk::EncapsulateMetaData<std::string>(dictionary, otherPatientIDTag, otherPatientID);
-// 	itk::EncapsulateMetaData<std::string>(dictionary, otherPatientNameTag, otherPatientName);
-// 	itk::EncapsulateMetaData<std::string>(dictionary, patientAgeTag, patientAge);
-// 	itk::EncapsulateMetaData<std::string>(dictionary, patientSizeTag, patientSize);
-// 	itk::EncapsulateMetaData<std::string>(dictionary, patientWeightTag, patientWeight);
-// }
-
-// void Anonymizer::ITK_anonymizeDcm(QString folderChoose,QFileInfoList dcmList)
-// {
-// 	QDir dir(folderChoose);
-// 	if (dcmList.size() == 0)
-// 	{
-// 		ui.progressBar->setValue(100);
-// 	}
-// 	for (int i = 0; i != dcmList.size(); i++)
-// 	{
-// 		ui.progressBar->setValue(100 * (i + 1) / dcmList.size());
-// 
-// 
-// 		ReaderType::Pointer reader = ReaderType::New();
-// 		WriterType::Pointer writer = WriterType::New();
-// 
-// 		std::string dcmPath_str = dcmList.at(i).absoluteFilePath().toStdString();
-// 		const char* dcmPath_char = dcmPath_str.c_str();
-// 
-// 		itk::ObjectFactoryBase::RegisterFactory(itk::MetaImageIOFactory::New());
-// 		
-// 		ImageIOType::Pointer ImageIO = ImageIOType::New();
-// 
-// 		reader->SetImageIO(ImageIO);
-// 		reader->SetFileName(dcmPath_char);    
-// 		try {
-// 			reader->Update();
-// 		}
-// 		catch(itk::ExceptionObject &err)
-// 		{
-// 			std::cerr << "ExceptionObject Caught" << std::endl;
-// 			std::cerr << err << std::endl;
-// 			std::cout << "can not read file: " << dcmPath_char << std::endl;
-// 			//printLog(mZlib.str2qstr("can not read file: "+ std::string(dcmPath_char)));
-// 		}
-// 		
-// 		ImageType::Pointer inputImage = reader->GetOutput();
-// 		DictionaryType & dictionary = inputImage->GetMetaDataDictionary();
-// 
-// 		anonymizeCore(dictionary);
-// 		
-// 		writer->SetImageIO(ImageIO);
-// 		writer->SetFileName(dcmPath_char);    
-// 		writer->SetInput(reader->GetOutput());
-// 		try {
-// 			writer->Update();
-// 		}
-// 		catch (itk::ExceptionObject &err) {
-// 			std::cerr << "ExceptionObject Caught" << std::endl;
-// 			std::cerr << err << std::endl;
-// 			std::cout << dcmPath_char << "anonymize failed !!!!!" << std::endl;
-// 			//printLog(mZlib.str2qstr(std::string(dcmPath_char) + "anonymize failed !!!!!"));
-// 		}
-// 
-// 		std::cout << dcmPath_char<< "  anonymized" << std::endl;
-// 		//printLog(mZlib.str2qstr(std::string(dcmPath_char) + "  anonymized"));
-// 	}
-// 	/*QStringList files = dir.entryList(nameFilters, QDir::Files | QDir::Readable, QDir::Name);
-// 	DcmFileFormat fileformat;
-// 	OFCondition status = fileformat.loadFile("");
-// 	DcmDataset *dataset = fileformat.getDataset();
-// 	OFString PatientName;
-// 	dataset->putAndInsertString(DCM_PatientName, "NoOne");
-// 	status = fileformat.saveFile("");
-// 	dataset->findAndGetOFString(DCM_PatientName, PatientName);
-// 	std::cout << PatientName;*/
-// }
-
-void Anonymizer::DCMTK_anonymizeDcm(QString folderChoose, QFileInfoList dcmList)
-{
-	QString createDir = folderChoose + "/dcm_temp/";
-	QDir dir;
-	CZlib zlib;
-	if (!dir.exists(createDir))
-	{
-		bool res = dir.mkdir(createDir);
-		if (res)
+		
+		switch (process_No)
 		{
-			std::cout << "create folder: " << createDir.toStdString() << std::endl;
-			printLog(mZlib.str2qstr("<font color = '#389fff'>create folder</font>: " + createDir.toStdString()));
+		case 0:
+			if (m_objThreadForDcm != nullptr)
+			{
+				m_objThreadForDcm->quit();
+				m_objThreadForDcm->wait();
+				delete m_objThreadForDcm;
+				m_objThreadForDcm = nullptr;
+			}
+			break;
+		case 1:
+			if (m_objThreadForZip != nullptr)
+			{
+				m_objThreadForZip->quit();
+				m_objThreadForZip->wait();
+				delete m_objThreadForZip;
+				m_objThreadForZip = nullptr;
+			}
+			break;
+		case 2:
+			if (m_objThreadForNoSuf != nullptr)
+			{
+				m_objThreadForNoSuf->quit();
+				m_objThreadForNoSuf->wait();
+				delete m_objThreadForNoSuf;
+				m_objThreadForNoSuf = nullptr;
+			}
+			break;
 		}
+		if (m_objThreadForDcm == nullptr && m_objThreadForZip == nullptr && m_objThreadForNoSuf == nullptr)
+		{
+			finishUi();
+		}
+	}
+	isProgressFinish = false;
+}
+
+void Anonymizer::slot_showAbout()
+{
+	QMessageBox::about(this, tr("About"), tr("<a href = https://github.com/bill4278/Anonymizer >https://github.com/bill4278/Anonymizer</a>"  "<br/><br/>Email: bill4278@foxmail.com"));
+}
+
+void Anonymizer::slot_showAboutQt()
+{
+	QMessageBox::aboutQt(this, tr("About Qt"));
+}
+
+void Anonymizer::slot_btn_collpaseLogBrowser()
+{
+	if (is_logBrowserCollpased)
+	{
+		setFixedSize(1124, 462);
+		ui.showLogBtn->setText("\nh\ni\nd\ne\n<\nl\no\ng\n");
+		is_logBrowserCollpased = false;
 	}
 	else
 	{
-		dir.rmdir(createDir);
+		setFixedSize(600, 462);
+		ui.showLogBtn->setText("\ns\nh\no\nw\n>\nl\no\ng\n");
+		is_logBrowserCollpased = true;
 	}
-	//QDir dir(folderChoose);
-	if (dcmList.size() == 0)
-	{
-		ui.progressBar->setValue(100);
-	}
-	for (int i = 0; i != dcmList.size(); i++)
-	{
-		QApplication::processEvents();
-		ui.progressBar->setValue(100 * (i + 1) / dcmList.size());
-
-		std::string dcmPath_str = dcmList.at(i).absoluteFilePath().toStdString();
-		const char* dcmPath_char = dcmPath_str.c_str();
-
-		OFCondition loadStatus;
-		OFCondition saveStatus;
-		DcmFileFormat fileformat;
-		//https://www.cnblogs.com/bayzhang/p/5484321.html
-		DcmMetaInfo * metainfo;
-		loadStatus = fileformat.loadFile(dcmPath_char);
-		if (loadStatus.good())
-		{
-			std::cout << "loading: "<< dcmPath_char << std::endl;
-			printLog(mZlib.str2qstr("<font color = '#389fff'>loading: </font>" + std::string(dcmPath_char)));
-		
-			DcmDataset * dataset = fileformat.getDataset();
-			dataset->putAndInsertString(DCM_PatientName, "Anonymous");
-			dataset->putAndInsertString(DCM_PatientID, "	");
-			dataset->putAndInsertString(DCM_PatientSex, "	");
-			dataset->putAndInsertString(DCM_PatientAge, "	");
-			dataset->putAndInsertString(DCM_PatientBirthDate, "	");
-			saveStatus = fileformat.saveFile(zlib.qstr2str(createDir + "temp.dcm").c_str());
-			removeFile(dcmPath_char);
-			renameFile(zlib.qstr2str(createDir + "temp.dcm").c_str(), dcmPath_char);
-
-			if (saveStatus.good())
-			{
-				std::cout << "anonymized: " << dcmPath_char << std::endl;
-				printLog(mZlib.str2qstr("<font color = '#389fff'><b>anonymized: </b></font>" + std::string(dcmPath_char)));
-			}
-			else
-			{
-				printLog(mZlib.str2qstr("<font color = 'red'><b> error to anonymize: </b></font>") + mZlib.str2qstr(std::string(dcmPath_char)));
-				printError(mZlib.str2qstr("<font color = 'red'><b> error to anonymize: </b></font>") + mZlib.str2qstr(std::string(dcmPath_char)));
-			}
-		}
-		else
-		{
-			printLog(mZlib.str2qstr("<font color = 'red'><b> error to load: </b></font>") + mZlib.str2qstr(std::string(dcmPath_char)));
-			printError(mZlib.str2qstr("<font color = 'red'><b> error to load: </b></font>") + mZlib.str2qstr(std::string(dcmPath_char)));
-		}
-
-
-		
-	}
-	if (dir.rmdir(createDir))
-	{
-		printLog(mZlib.str2qstr("<font color = '#389fff'>remove folder: </font>" + mZlib.qstr2str(createDir)));
-	}
-	else
-	{
-		printLog(mZlib.str2qstr("<font color = 'red'><b> error to remove folder: </b></font>" + mZlib.qstr2str(createDir)));
-		printError(mZlib.str2qstr("<font color = 'red'><b> error to remove folder: </b></font>" + mZlib.qstr2str(createDir)));
-	}
-	
 }
 
-void Anonymizer::anonymizeZip(QString folderChoose, QFileInfoList zipList)
+void Anonymizer::slot_btn_chooseFolderForDcm()
 {
-	QString createUnzipDir = folderChoose + "/unzip_temp/";
-	QDir dir;
+	m_objThreadForDcm = new QThread(this);
+	anonyDCMThread = new threadAnonyDCM();
+	anonyDCMThread->moveToThread(m_objThreadForDcm);
+	connect(this, &Anonymizer::anonyDCMStart, anonyDCMThread, &threadAnonyDCM::DCMTK_anonymizeDcm);
+	connect(anonyDCMThread, &threadAnonyDCM::progressStatus, this, &Anonymizer::printLog);
+	connect(anonyDCMThread, &threadAnonyDCM::progressError, this, &Anonymizer::printError);
+	connect(anonyDCMThread, &threadAnonyDCM::progressValue, this, &Anonymizer::setProgressValue);
+	connect(anonyDCMThread, &threadAnonyDCM::fatalError, this, &Anonymizer::fatalError);
+	connect(anonyDCMThread, &threadAnonyDCM::progressFinished, this, &Anonymizer::getProgressFinished);
 
-		
-	std::string createUnzipDir_str = mZlib.qstr2str(createUnzipDir);
-	const char *uncompressPath_char = createUnzipDir_str.c_str();
-	std::cout << uncompressPath_char << std::endl;
+	connect(m_objThreadForDcm, &QThread::finished, m_objThreadForDcm, &QObject::deleteLater);
+	connect(m_objThreadForDcm, &QThread::finished, anonyDCMThread, &QObject::deleteLater);
 
-	QString createZipDir = folderChoose + "/zip_temp.zip";
-
-
-	std::string createZipDir_str = mZlib.qstr2str(createZipDir);
-	const char *compressPath_char = createZipDir_str.c_str();
-	std::cout << compressPath_char << std::endl;
-
-
-
-	if (zipList.size() == 0)
+	folderChoose = fileDialog->getExistingDirectory();
+	if (folderChoose != NULL)
 	{
-		ui.progressBar_2->setValue(100);
+
+		processingUi();
+
+		ui.folderNameLabel->setText(folderChoose);
+
+		if (m_objThreadForDcm)
+		{
+			m_objThreadForDcm->start();                //开启线程
+			emit anonyDCMStart(folderChoose);                  //发出信号，启动子线程的指定槽函数go
+		}
+
+
 	}
-	for (int i = 0; i != zipList.size(); i++)
-	{
-		if (!dir.exists(createUnzipDir))
-		{
-			bool res = dir.mkdir(createUnzipDir);
-			if (res)
-			{
-				std::cout << "create folder: " << createUnzipDir.toStdString() << std::endl;
-				printLog(mZlib.str2qstr("<font color = '#389fff'>create folder: </font>" + createUnzipDir.toStdString()));
-			}
-		}
-		else
-		{
-			dir.rmdir(createUnzipDir);
-		}
 
-		QApplication::processEvents();
-		ui.progressBar_2->setValue(100 * (i + 1) / zipList.size());
-		std::string zipPath_str = zipList.at(i).absoluteFilePath().toStdString();
-		std::cout << "loading zip file " << zipPath_str << std::endl;
-		int succd = mZlib.UnCompress(zipPath_str.c_str(), uncompressPath_char);
-		if (succd == 1)
-		{
-			std::cout << "uncompressed : " << zipPath_str << std::endl;
-			printLog(mZlib.str2qstr("<font color = '#389fff'>uncompressed: </font>" + std::string(zipPath_str)));
-		}
-		else
-		{
-			std::cout << "!!!!!  failed uncompressed : " << zipPath_str << std::endl;
-			printLog(mZlib.str2qstr("<font color = 'red'><b> error to uncompress : </b></font>" + std::string(zipPath_str)));
-			printError(mZlib.str2qstr("<font color = 'red'><b> error to uncompress : </b></font>" + std::string(zipPath_str)));
-		}
-
-		QFileInfoList zipDcmList;
-
-		if (succd)
-		{
-			nameFiltersDcm << "*.dcm";
-			zipDcmList = getFileList(uncompressPath_char, nameFiltersDcm);
-			if (zipDcmList.size() == 0)
-			{
-				ui.progressBar->setValue(100);
-			}
-			else
-			{
-				DCMTK_anonymizeDcm(uncompressPath_char, zipDcmList);
-
-
-
-
-
-				nameFiltersAllSuffix << "*.*";
-				QFileInfoList zipFileList = getFileList(uncompressPath_char, nameFiltersAllSuffix);
-
-				mZlib.Compress(zipFileList, compressPath_char, uncompressPath_char);
-			}
-		}
-		
-// 		d.setFilter(QDir::Files);
-// 		int j, k = d.count() - 1;
-// 		for (j = 0;j <= k;j++)
-// 		{
-// 			if (! d.remove(d[j]))
-// 			{
-// 				printLog(mZlib.str2qstr("<font color = 'red'><b> error to remove file: </b><font>") + d[j]);
-// 				printError(mZlib.str2qstr("<font color = 'red'><b> error to remove file: </b><font>") + d[j]);
-// 			}
-// 		}
-		QDir d(uncompressPath_char);
-		if (d.removeRecursively())
-		{
-			std::cout << "removed temp files" << std::endl;
-			printLog(mZlib.str2qstr("<font color = '#389fff'>removed temp files</font>"));
-		}
-
-		if (zipDcmList.size() != 0)
-		{
-			removeFile(zipPath_str.c_str());
-			renameFile(compressPath_char, zipPath_str.c_str());
-		}
-	}
-	//dir.rmdir(uncompressPath_char);// this method only suitable for empty folder
 }
 
-void Anonymizer::anonymizeNoSuffix(QString folderChoose)
+void Anonymizer::slot_btn_chooseFolderForZip()
 {
-	nameFiltersAllFile << "*";
-	QFileInfoList AllFilesList = getFileList(folderChoose, nameFiltersAllFile);
+	m_objThreadForZip = new QThread(this);
+	anonyZipThread = new threadAnonyZip();
+	anonyZipThread->moveToThread(m_objThreadForZip);
+	connect(this, &Anonymizer::anonyZipStart, anonyZipThread, &threadAnonyZip::anonymizeZip);
+	connect(anonyZipThread, &threadAnonyZip::progressStatus, this, &Anonymizer::printLog);
+	connect(anonyZipThread, &threadAnonyZip::progressError, this, &Anonymizer::printError);
+	connect(anonyZipThread, &threadAnonyZip::progressValue, this, &Anonymizer::setProgressValue);
+	connect(anonyZipThread, &threadAnonyZip::fatalError, this, &Anonymizer::fatalError);
+	connect(anonyZipThread, &threadAnonyZip::progressFinished, this, &Anonymizer::getProgressFinished);
 
-	nameFiltersAllSuffix << "*.*";
-	QFileInfoList AllSuffixList = getFileList(folderChoose, nameFiltersAllSuffix);
+	connect(m_objThreadForZip, &QThread::finished, m_objThreadForZip, &QObject::deleteLater);
+	connect(m_objThreadForZip, &QThread::finished, anonyZipThread, &QObject::deleteLater);
 
-	QFileInfoList NoSuffixList;
-
-	for (int i = 0; i != AllFilesList.size(); i++)
+	folderChoose = fileDialog->getExistingDirectory();
+	if (folderChoose != NULL)
 	{
-		QApplication::processEvents();
-		if (!(AllSuffixList.contains(AllFilesList.at(i))))
+
+		processingUi();
+
+		ui.folderNameLabel->setText(folderChoose);
+
+		if (m_objThreadForZip)
 		{
-			NoSuffixList.append(AllFilesList.at(i));
-			std::string NoSuffixPath_str = AllFilesList.at(i).absoluteFilePath().toStdString();
-			std::cout <<"found no suffix file: "<< NoSuffixPath_str << std::endl;
-			printLog(mZlib.str2qstr("<font color='#389fff'>found no suffix file: </font>" + NoSuffixPath_str));
+			m_objThreadForZip->start();
+			emit anonyZipStart(folderChoose);
 		}
+
+		
 	}
-	if (NoSuffixList.size() == 0)
+
+}
+
+void Anonymizer::slot_btn_chooseFolderForNoSuffix()
+{
+	m_objThreadForNoSuf = new QThread(this);
+	anonyNoSufThread = new threadAnonyNoSuffix();
+	anonyNoSufThread->moveToThread(m_objThreadForNoSuf);
+	connect(this, &Anonymizer::anonyNoSufStart, anonyNoSufThread, &threadAnonyNoSuffix::anonymizeNosuffix);
+	connect(anonyNoSufThread, &threadAnonyNoSuffix::progressStatus, this, &Anonymizer::printLog);
+	connect(anonyNoSufThread, &threadAnonyNoSuffix::progressError, this, &Anonymizer::printError);
+	connect(anonyNoSufThread, &threadAnonyNoSuffix::progressValue, this, &Anonymizer::setProgressValue);
+	connect(anonyNoSufThread, &threadAnonyNoSuffix::fatalError, this, &Anonymizer::fatalError);
+	connect(anonyNoSufThread, &threadAnonyNoSuffix::progressFinished, this, &Anonymizer::getProgressFinished);
+
+	connect(m_objThreadForNoSuf, &QThread::finished, m_objThreadForNoSuf, &QObject::deleteLater);
+	connect(m_objThreadForNoSuf, &QThread::finished, anonyNoSufThread, &QObject::deleteLater);
+
+	QString folderChoose = fileDialog->getExistingDirectory();
+	if (folderChoose != NULL)
 	{
-		ui.progressBar_3->setValue(100);
+		processingUi();
+
+		ui.folderNameLabel->setText(folderChoose);
+
+		if (m_objThreadForNoSuf)
+		{
+			m_objThreadForNoSuf->start();
+			emit anonyNoSufStart(folderChoose);
+		}
+
 	}
-	for (int j = 0; j != NoSuffixList.size(); j++)
-	{
-		QApplication::processEvents();
-		QFileInfoList tempFileList;
-		tempFileList.append(NoSuffixList.at(j));// just for progress bar ...
-		DCMTK_anonymizeDcm(folderChoose, tempFileList);
-		ui.progressBar_3->setValue(100 * (j + 1) / NoSuffixList.size());
-	}
+}
+
+void Anonymizer::slot_btn_chooseFolder()
+{
+	m_objThreadForDcm = new QThread(this);
+	m_objThreadForZip = new QThread(this);
+	m_objThreadForNoSuf = new QThread(this);
+
+	anonyDCMThread = new threadAnonyDCM();
+	anonyZipThread = new threadAnonyZip();
+	anonyNoSufThread = new threadAnonyNoSuffix();
+
+	anonyDCMThread->moveToThread(m_objThreadForDcm);
+	connect(this, &Anonymizer::anonyDCMStart, anonyDCMThread, &threadAnonyDCM::DCMTK_anonymizeDcm);
+	connect(anonyDCMThread, &threadAnonyDCM::progressStatus, this, &Anonymizer::printLog);
+	connect(anonyDCMThread, &threadAnonyDCM::progressError, this, &Anonymizer::printError);
+	connect(anonyDCMThread, &threadAnonyDCM::progressValue, this, &Anonymizer::setProgressValue);
+	connect(anonyDCMThread, &threadAnonyDCM::fatalError, this, &Anonymizer::fatalError);
+	connect(anonyDCMThread, &threadAnonyDCM::progressFinished, this, &Anonymizer::getProgressFinished);
+
+	connect(m_objThreadForDcm, &QThread::finished, m_objThreadForDcm, &QObject::deleteLater);
+	connect(m_objThreadForDcm, &QThread::finished, anonyDCMThread, &QObject::deleteLater);
+
+	anonyZipThread->moveToThread(m_objThreadForZip);
+	connect(this, &Anonymizer::anonyZipStart, anonyZipThread, &threadAnonyZip::anonymizeZip);
+	connect(anonyZipThread, &threadAnonyZip::progressStatus, this, &Anonymizer::printLog);
+	connect(anonyZipThread, &threadAnonyZip::progressError, this, &Anonymizer::printError);
+	connect(anonyZipThread, &threadAnonyZip::progressValue, this, &Anonymizer::setProgressValue);
+	connect(anonyZipThread, &threadAnonyZip::fatalError, this, &Anonymizer::fatalError);
+	connect(anonyZipThread, &threadAnonyZip::progressFinished, this, &Anonymizer::getProgressFinished);
+
+	connect(m_objThreadForZip, &QThread::finished, m_objThreadForZip, &QObject::deleteLater);
+	connect(m_objThreadForZip, &QThread::finished, anonyZipThread, &QObject::deleteLater);
+
+	anonyNoSufThread->moveToThread(m_objThreadForNoSuf);
+	connect(this, &Anonymizer::anonyNoSufStart, anonyNoSufThread, &threadAnonyNoSuffix::anonymizeNosuffix);
+	connect(anonyNoSufThread, &threadAnonyNoSuffix::progressStatus, this, &Anonymizer::printLog);
+	connect(anonyNoSufThread, &threadAnonyNoSuffix::progressError, this, &Anonymizer::printError);
+	connect(anonyNoSufThread, &threadAnonyNoSuffix::progressValue, this, &Anonymizer::setProgressValue);
+	connect(anonyNoSufThread, &threadAnonyNoSuffix::fatalError, this, &Anonymizer::fatalError);
+	connect(anonyNoSufThread, &threadAnonyNoSuffix::progressFinished, this, &Anonymizer::getProgressFinished);
+
+	connect(m_objThreadForNoSuf, &QThread::finished, m_objThreadForNoSuf, &QObject::deleteLater);
+	connect(m_objThreadForNoSuf, &QThread::finished, anonyNoSufThread, &QObject::deleteLater);
 	
+	QString folderChoose = fileDialog->getExistingDirectory();
 
+	if (folderChoose != NULL)
+	{
+		processingUi();
 
+		ui.folderNameLabel->setText(folderChoose);
+
+		if (m_objThreadForDcm && m_objThreadForZip && m_objThreadForNoSuf)
+		{
+			m_objThreadForDcm->start();
+			emit anonyDCMStart(folderChoose);
+
+			m_objThreadForZip->start(); 
+			emit anonyZipStart(folderChoose);
+
+			m_objThreadForNoSuf->start();
+			emit anonyNoSufStart(folderChoose);
+		}
+
+	}
 }
 
 void Anonymizer::slot_btn_chooseFile()
@@ -489,24 +415,49 @@ void Anonymizer::slot_btn_chooseFile()
 	if (filePath != NULL)
 	{
 		processingUi();
-
 		ui.folderNameLabel->setText(filePath);
 		if (filePath.contains(".zip"))
 		{
+			m_objThreadForZip = new QThread(this);
+			anonyZipThread = new threadAnonyZip();
+			anonyZipThread->moveToThread(m_objThreadForZip);
+			connect(this, &Anonymizer::anonyZipStart_2, anonyZipThread, &threadAnonyZip::anonymizeZip_2);
+			connect(anonyZipThread, &threadAnonyZip::progressStatus, this, &Anonymizer::printLog);
+			connect(anonyZipThread, &threadAnonyZip::progressError, this, &Anonymizer::printError);
+			connect(anonyZipThread, &threadAnonyZip::progressValue, this, &Anonymizer::setProgressValue);
+			connect(anonyZipThread, &threadAnonyZip::fatalError, this, &Anonymizer::fatalError);
+			connect(anonyZipThread, &threadAnonyZip::progressFinished, this, &Anonymizer::getProgressFinished);
+
+			connect(m_objThreadForZip, &QThread::finished, m_objThreadForZip, &QObject::deleteLater);
+			connect(m_objThreadForZip, &QThread::finished, anonyZipThread, &QObject::deleteLater);
+
 			QFileInfoList fileList;
 			fileList.append(filePath);
 			QStringList filePathSegment = filePath.split("/");
 			QString fileFolder = filePathSegment[0];
-			for (int i = 1; i < filePathSegment.length()-1;i++)
+			for (int i = 1; i < filePathSegment.length() - 1;i++)
 			{
 				fileFolder = fileFolder + "/" + filePathSegment[i];
 			}
 
-			anonymizeZip(fileFolder, fileList);
-
+			m_objThreadForZip->start();
+			emit anonyZipStart_2(fileFolder, fileList);
 		}
 		else
 		{
+			m_objThreadForDcm = new QThread(this);
+			anonyDCMThread = new threadAnonyDCM();
+			anonyDCMThread->moveToThread(m_objThreadForDcm);
+			connect(this, &Anonymizer::anonyDCMStart_2, anonyDCMThread, &threadAnonyDCM::DCMTK_anonymizeDcm_2);
+			connect(anonyDCMThread, &threadAnonyDCM::progressStatus, this, &Anonymizer::printLog);
+			connect(anonyDCMThread, &threadAnonyDCM::progressError, this, &Anonymizer::printError);
+			connect(anonyDCMThread, &threadAnonyDCM::progressValue, this, &Anonymizer::setProgressValue);
+			connect(anonyDCMThread, &threadAnonyDCM::fatalError, this, &Anonymizer::fatalError);
+			connect(anonyDCMThread, &threadAnonyDCM::progressFinished, this, &Anonymizer::getProgressFinished);
+
+			connect(m_objThreadForDcm, &QThread::finished, m_objThreadForDcm, &QObject::deleteLater);
+			connect(m_objThreadForDcm, &QThread::finished, anonyDCMThread, &QObject::deleteLater);
+
 			QFileInfoList fileList;
 			fileList.append(filePath);
 			QStringList filePathSegment = filePath.split("/");
@@ -517,95 +468,9 @@ void Anonymizer::slot_btn_chooseFile()
 			}
 
 
-			DCMTK_anonymizeDcm(fileFolder, fileList);
+			m_objThreadForDcm->start();
+			emit anonyDCMStart_2(fileFolder, fileList);
 		}
-
-		finishUi();
 	}
-}
-
-void Anonymizer::slot_btn_chooseFolder()
-{
-	QString folderChoose = fileDialog->getExistingDirectory();
-	if (folderChoose != NULL)
-	{
-		processingUi();
-
-		ui.folderNameLabel->setText(folderChoose);
-		nameFiltersDcm << "*.dcm";
-		QFileInfoList dcmList = getFileList(folderChoose, nameFiltersDcm);
-		DCMTK_anonymizeDcm(folderChoose, dcmList);
-		nameFiltersZip << "*.zip";
-		QFileInfoList zipList = getFileList(folderChoose, nameFiltersZip);
-		anonymizeZip(folderChoose, zipList);
-		anonymizeNoSuffix(folderChoose);
-
-		finishUi();
-	}
-
-    
-}
-
-void Anonymizer::slot_btn_chooseFolderForDcm()
-{
-
-	QString folderChoose = fileDialog->getExistingDirectory();
-	if (folderChoose != NULL)
-	{
-
-		processingUi();
-
-		ui.folderNameLabel->setText(folderChoose);
-
-		nameFiltersDcm << "*.dcm";
-		QFileInfoList dcmList = getFileList(folderChoose, nameFiltersDcm);
-		DCMTK_anonymizeDcm(folderChoose, dcmList);
-
-		finishUi();
-	}
-
-
-}
-
-void Anonymizer::slot_btn_chooseFolderForZip()
-{
-
-	QString folderChoose = fileDialog->getExistingDirectory();
-	if (folderChoose != NULL)
-	{
-
-		processingUi();
-
-		ui.folderNameLabel->setText(folderChoose);
-
-		nameFiltersZip << "*.zip";
-		QFileInfoList zipList = getFileList(folderChoose, nameFiltersZip);
-
-		anonymizeZip(folderChoose, zipList);
-
-
-		finishUi();
-	}
-
-
-}
-
-void Anonymizer::slot_btn_chooseFolderForNoSuffix()
-{
-
-	QString folderChoose = fileDialog->getExistingDirectory();
-	if (folderChoose != NULL)
-	{
-
-		processingUi();
-
-		ui.folderNameLabel->setText(folderChoose);
-
-		anonymizeNoSuffix(folderChoose);
-
-		finishUi();
-	}
-
-
 
 }

@@ -13,6 +13,13 @@
 #include <QFile>
 #include <QMessageBox>
 #include <QCloseEvent>
+#include <QThread>
+#include <QMetaType>
+
+#include "Thread_DCMTK_anonymizeDCM.h"
+#include "Thread_anonymizeZip.h"
+#include "Thread_anonymizeNoSuffix.h"
+
 //#include <QFuture>
 //#include <QtConcurrent>
 
@@ -37,7 +44,7 @@ class Anonymizer : public QMainWindow
 
 public:
 	Anonymizer(QWidget *parent = Q_NULLPTR);
-
+	Anonymizer::~Anonymizer();
 	QFileDialog *fileDialog = new QFileDialog(this);
 
 
@@ -47,69 +54,51 @@ private:
 
 	void setupConnection();
 
-
-
-	void removeFile(const char * filePath);
-	void renameFile(const char * oldFilePath, const char * newFileName);
-	bool is_logBrowserCollpased = true;
-	void printLog(QString logQStr);
-	void printError(QString errQStr);
-
-	void anonymizeZip(QString folderChoose, QFileInfoList zipList);
-	void DCMTK_anonymizeDcm(QString folderChoose, QFileInfoList dcmList);
-	void anonymizeNoSuffix(QString folderChoose);
-
 	void processingUi();
 	void finishUi();
 
-
-	QFileInfoList getFileList(QString folderChoose, QStringList nameFilters);
-
-
-
-	std::string patientNameTag = "0010|0010";
-	std::string patientName = "huangbiubiu123";
-	std::string patientIDTag = "0010|0020";
-	std::string patientID = "huangbiubiu123";
-	std::string patientBirthDateTag = "0010|0030";
-	std::string patientBirthDate = "huangbiubiu123";
-	std::string patientBirthTimeTag = "0010|0032";
-	std::string patientBirthTime = "huangbiubiu123";
-	std::string patientSexTag = "0010|0040";
-	std::string patientSex = "huangbiubiu123";
-	std::string otherPatientIDTag = "0010|1000";
-	std::string otherPatientID = "huangbiubiu123";
-	std::string otherPatientNameTag = "0010|1001";
-	std::string otherPatientName = "huangbiubiu123";
-	std::string patientAgeTag = "0010|1010";
-	std::string patientAge = "huangbiubiu123";
-	std::string patientSizeTag = "0010|1020";
-	std::string patientSize = "huangbiubiu123";
-	std::string patientWeightTag = "0010|1030";
-	std::string patientWeight = "huangbiubiu123";
+	threadAnonyDCM* anonyDCMThread = nullptr;
+	threadAnonyZip* anonyZipThread = nullptr;
+	threadAnonyNoSuffix* anonyNoSufThread = nullptr;
 
 
-	QStringList nameFiltersDcm;
-	QStringList nameFiltersZip;
-	QStringList nameFiltersAllSuffix;
-	QStringList nameFiltersAllFile;
-
-	
-	CZlib mZlib;
+	QThread* m_objThreadForDcm = nullptr;
+	QThread* m_objThreadForZip = nullptr;
+	QThread* m_objThreadForNoSuf = nullptr;
+	QThread* m_objThreadForFolder = nullptr;
 
 
+	QString folderChoose;
+
+	commonOperation m_coP;
+
+	bool is_logBrowserCollpased = true;
+	bool isProgressFinish = false;
+
+signals:
+	void anonyDCMStart(const QString);
+	void anonyZipStart(const QString);
+
+	void anonyDCMStart_2(const QString, const QFileInfoList fileList);
+	void anonyZipStart_2(const QString, const QFileInfoList fileList);
+
+	void anonyNoSufStart(const QString);
 
 private slots:
-	void slot_btn_chooseFile();
-	void slot_btn_chooseFolder();
 	void slot_btn_chooseFolderForDcm();
 	void slot_btn_chooseFolderForZip();
 	void slot_btn_chooseFolderForNoSuffix();
+	void slot_btn_chooseFolder();
+	void slot_btn_chooseFile();
+	void printLog(QString logQStr);
+	void printError(QString logQStr);
 	void slot_btn_collpaseLogBrowser();
+	void setProgressValue(const float value, const int bar_No);
+	void getProgressFinished(const bool isFinish, const int process_No);
+	void fatalError(QString);
+	void closeEvent(QCloseEvent *event);
 	void slot_showAbout();
 	void slot_showAboutQt();
-	void closeEvent(QCloseEvent *event);
-	
-
 
 };
+Q_DECLARE_METATYPE(QFileInfoList);

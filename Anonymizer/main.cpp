@@ -6,6 +6,7 @@
 
 int main(int argc, char *argv[])
 {
+	qRegisterMetaType<QFileInfoList>("QFileInfoList");
 	QApplication a(argc, argv);
 	
 	Anonymizer AnonymizerMainWindow;	

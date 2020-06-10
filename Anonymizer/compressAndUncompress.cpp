@@ -1,16 +1,7 @@
 #include "compressAndUncompress.h"
 
 
-QString CZlib::str2qstr(const std::string str)
-{
-	return QString::fromLocal8Bit((str.data()));
-}
 
-std::string CZlib::qstr2str(const QString qstr)
-{
-	QByteArray cdata = qstr.toLocal8Bit();
-	return std::string(cdata);
-}
 
 
 /* https://segmentfault.com/a/1190000007301597 */
@@ -52,16 +43,16 @@ int CZlib::UnCompress(const char * srcName, const char * tgtName)
 		if ((FileInfo.external_fa & FILE_ATTRIBUTE_DIRECTORY))
 		{
 			QDir dir;
-			tempPath = qstr2str(str2qstr(tgtName) + file);
-			dir.mkdir(str2qstr(tempPath));
+			tempPath = m_coP.qstr2str(m_coP.str2qstr(tgtName) + file);
+			dir.mkdir(m_coP.str2qstr(tempPath));
 		}
 		
 		result = unzOpenCurrentFile(zFile);
 		char data[102400] = { 0 };
 		int size;
-		QString path = str2qstr(tgtName) + file;
+		QString path = m_coP.str2qstr(tgtName) + file;
 		QFile f(path);
-		std::cout << qstr2str(path) << std::endl;
+		std::cout << m_coP.qstr2str(path) << std::endl;
 		f.open(QFile::WriteOnly);
 		while (true)
 		{

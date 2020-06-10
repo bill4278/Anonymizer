@@ -18,7 +18,7 @@
    <bool>false</bool>
   </property>
   <property name="windowTitle">
-   <string>Anonymizer 1.6</string>
+   <string>Anonymizer 2.0</string>
   </property>
   <property name="autoFillBackground">
    <bool>true</bool>
@@ -162,7 +162,7 @@ s
 h
 o
 w
- 》 
+&gt;
 l
 o
 g
