@@ -50,7 +50,7 @@ void threadAnonyNoSuffix::anonymizeNosuffix(QString folderChoose)
 	}
 	if (NoSuffixList.size() == 0)
 	{
-		emit progressValue(100, 2);
+		emit progressValue(100, 3);
 	}
 	for (int j = 0; j != NoSuffixList.size(); j++)
 	{
