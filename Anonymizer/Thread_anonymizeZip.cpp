@@ -32,7 +32,7 @@ void threadAnonyZip::anonymizeZip(QString folderChoose)
 {
 	nameFiltersZip << ("*.zip");
 	QFileInfoList zipList = m_coP.getFileList(folderChoose, nameFiltersZip);
-	QString createUnzipDir = folderChoose + "/unzip_temp/";
+	QString createUnzipDir = folderChoose + "/anonymizer_unzip_temp/";
 	QDir dir;
 
 
@@ -40,7 +40,7 @@ void threadAnonyZip::anonymizeZip(QString folderChoose)
 	const char *uncompressPath_char = createUnzipDir_str.c_str();
 	std::cout << uncompressPath_char << std::endl;
 
-	QString createZipDir = folderChoose + "/zip_temp.zip";
+	QString createZipDir = folderChoose + "/anonymizer_zip_temp.zip";
 
 
 	std::string createZipDir_str = m_coP.qstr2str(createZipDir);
@@ -66,7 +66,14 @@ void threadAnonyZip::anonymizeZip(QString folderChoose)
 		}
 		else
 		{
-			dir.rmdir(createUnzipDir);
+			QDir d(createUnzipDir);
+			d.removeRecursively();
+			bool res = dir.mkdir(createUnzipDir);
+			if (res)
+			{
+				std::cout << "create folder: " << createUnzipDir.toStdString() << std::endl;
+				emit progressStatus(m_coP.str2qstr("<font color = '#389fff'>create folder: </font>" + createUnzipDir.toStdString()));
+			}
 		}
 
 		std::string zipPath_str = zipList.at(i).absoluteFilePath().toStdString();
@@ -129,7 +136,7 @@ void threadAnonyZip::anonymizeZip(QString folderChoose)
 }
 void threadAnonyZip::anonymizeZip_2(QString folderChoose, QFileInfoList zipList)
 {
-	QString createUnzipDir = folderChoose + "/unzip_temp/";
+	QString createUnzipDir = folderChoose + "/anonymizer_unzip_temp/";
 	QDir dir;
 
 
@@ -137,7 +144,7 @@ void threadAnonyZip::anonymizeZip_2(QString folderChoose, QFileInfoList zipList)
 	const char *uncompressPath_char = createUnzipDir_str.c_str();
 	std::cout << uncompressPath_char << std::endl;
 
-	QString createZipDir = folderChoose + "/zip_temp.zip";
+	QString createZipDir = folderChoose + "/anonymizer_zip_temp.zip";
 
 
 	std::string createZipDir_str = m_coP.qstr2str(createZipDir);
@@ -163,7 +170,14 @@ void threadAnonyZip::anonymizeZip_2(QString folderChoose, QFileInfoList zipList)
 		}
 		else
 		{
-			dir.rmdir(createUnzipDir);
+			QDir d(createUnzipDir);
+			d.removeRecursively();
+			bool res = dir.mkdir(createUnzipDir);
+			if (res)
+			{
+				std::cout << "create folder: " << createUnzipDir.toStdString() << std::endl;
+				emit progressStatus(m_coP.str2qstr("<font color = '#389fff'>create folder: </font>" + createUnzipDir.toStdString()));
+			}
 		}
 
 		std::string zipPath_str = zipList.at(i).absoluteFilePath().toStdString();

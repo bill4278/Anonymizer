@@ -8,7 +8,7 @@ threadAnonyDCM::threadAnonyDCM(QObject *parent) :QObject(parent)
 void threadAnonyDCM::DCMTK_anonymizeDcm_2(const QString folderChoose, const QFileInfoList dcmList)
 {
 
-	QString createDir = folderChoose + "/dcm_temp_2/";
+	QString createDir = folderChoose + "/anonymizer_dcm_temp_2/";
 	QDir dir;
 	if (!dir.exists(createDir))
 	{
@@ -21,7 +21,14 @@ void threadAnonyDCM::DCMTK_anonymizeDcm_2(const QString folderChoose, const QFil
 	}
 	else
 	{
-		dir.rmdir(createDir);
+		QDir d(createDir);
+		d.removeRecursively();
+		bool res = dir.mkdir(createDir);
+		if (res)
+		{
+			std::cout << "create folder: " << createDir.toStdString() << std::endl;
+			emit progressStatus(m_coP.str2qstr("<font color = '#389fff'>create folder</font>: " + createDir.toStdString()));
+		}
 	}
 	if (dcmList.size() == 0)
 	{
@@ -46,7 +53,7 @@ void threadAnonyDCM::DCMTK_anonymizeDcm_2(const QString folderChoose, const QFil
 			emit progressStatus(m_coP.str2qstr("<font color = '#389fff'>loading: </font>" + std::string(dcmPath_char)));
 
 			DcmDataset * dataset = fileformat.getDataset();
-			dataset->putAndInsertString(DCM_PatientName, "Anonymous222");
+			dataset->putAndInsertString(DCM_PatientName, "Anonymous");
 			dataset->putAndInsertString(DCM_PatientID, "	");
 			dataset->putAndInsertString(DCM_PatientSex, "	");
 			dataset->putAndInsertString(DCM_PatientAge, "	");
@@ -97,7 +104,7 @@ void threadAnonyDCM::DCMTK_anonymizeDcm(const QString folderChoose)
 	nameFiltersDcm << ("*.dcm");
 	QFileInfoList dcmList = m_coP.getFileList(folderChoose, nameFiltersDcm);
 
-	QString createDir = folderChoose + "/dcm_temp/";
+	QString createDir = folderChoose + "/anonymizer_dcm_temp/";
 	QDir dir;
 	if (!dir.exists(createDir))
 	{
@@ -110,7 +117,14 @@ void threadAnonyDCM::DCMTK_anonymizeDcm(const QString folderChoose)
 	}
 	else
 	{
-		dir.rmdir(createDir);
+		QDir d(createDir);
+		d.removeRecursively();
+		bool res = dir.mkdir(createDir);
+		if (res)
+		{
+			std::cout << "create folder: " << createDir.toStdString() << std::endl;
+			emit progressStatus(m_coP.str2qstr("<font color = '#389fff'>create folder</font>: " + createDir.toStdString()));
+		}
 	}
 	if (dcmList.size() == 0)
 	{
@@ -135,7 +149,7 @@ void threadAnonyDCM::DCMTK_anonymizeDcm(const QString folderChoose)
 			emit progressStatus(m_coP.str2qstr("<font color = '#389fff'>loading: </font>" + std::string(dcmPath_char)));
 
 			DcmDataset * dataset = fileformat.getDataset();
-			dataset->putAndInsertString(DCM_PatientName, "Anonymous222");
+			dataset->putAndInsertString(DCM_PatientName, "Anonymous");
 			dataset->putAndInsertString(DCM_PatientID, "	");
 			dataset->putAndInsertString(DCM_PatientSex, "	");
 			dataset->putAndInsertString(DCM_PatientAge, "	");
