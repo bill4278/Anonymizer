@@ -9,6 +9,6 @@
 ## Environment and Packages: C++, QT5, ITK 3.4, zlib
 
 ## Author: 黄biubiu
-## Email: bill4278@foxmail.com
+
 ## Welcome to all communication !
 
