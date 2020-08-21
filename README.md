@@ -2,10 +2,10 @@
 
 ![image](https://github.com/bill4278/Anonymizer/blob/MergeLogBrowserIntoMainWindow/snapshot_1.6.gif)
 
-## 工作需要写了一个用于匿名DICOM文件的工具，可以匿名普通dicom，压缩格式dicom，藏在zip压缩包里的dicom，以及没有后缀的dicom，旁边的logbrowser输出信息，底下的errorlist提示哪些文件可能损坏。
-## 现在它可以匿名任何它可以匿名的文件了。
+## Function: an useful tool for 'DICOM' file anonymize. Suitable for all '.dcm' suffix or no suffix DICOM format files, even if these files have been zipped in ".zip" files (more format will be supported later).
 
-## 环境：QT5，C++，ITK3.4，zlib
+## Environment and Packages: C++, QT5, ITK 3.4, zlib
 
-## 作者： 黄biubiu，欢迎交流
+## Author: 黄biubiu
 ## Email: bill4278@foxmail.com
+## Welcome to all communication !
