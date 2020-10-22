@@ -142,6 +142,12 @@ void threadAnonyDCM::DCMTK_anonymizeDcm(const QString folderChoose)
 		DcmFileFormat fileformat;
 		//https://www.cnblogs.com/bayzhang/p/5484321.html
 		DcmMetaInfo * metainfo;
+		if (_access(dcmPath_char, 6) == -1)//determine whether it is read-only file
+		{
+			emit progressStatus(m_coP.str2qstr("<font color = 'red'><b> file permission denied: </b></font>") + m_coP.str2qstr(std::string(dcmPath_char)));
+			emit progressError(m_coP.str2qstr("<font color = 'red'><b> file permission denied: </b></font>") + m_coP.str2qstr(std::string(dcmPath_char)));
+			continue;
+		}
 		loadStatus = fileformat.loadFile(dcmPath_char);
 		if (loadStatus.good())
 		{
@@ -159,7 +165,6 @@ void threadAnonyDCM::DCMTK_anonymizeDcm(const QString folderChoose)
 			int removeStatus = m_coP.removeFile(dcmPath_char);
 
 			int renameStatus = m_coP.renameFile(m_coP.qstr2str(createDir + "temp.dcm").c_str(), dcmPath_char);
-
 			if (saveStatus.good() && (renameStatus == 1) && (removeStatus == 1))
 			{
 				std::cout << "anonymized: " << dcmPath_char << std::endl;

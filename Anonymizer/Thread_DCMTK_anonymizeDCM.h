@@ -3,6 +3,7 @@
 
 #pragma comment(lib,"WS2_32.lib")
 
+#include "io.h"
 #include <QObject>
 #include <QFile>
 #include <QDir>
@@ -12,6 +13,7 @@
 #include "dcmtk/dcmdata/dctk.h"
 #include "dcmtk/dcmjpeg/djdecode.h"
 #include "dcmtk/dcmdata/dcrledrg.h"
+
 
 //https://blog.csdn.net/u012372584/article/details/80509217
 //https://blog.csdn.net/zhenguo26/article/details/82588415
