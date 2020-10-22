@@ -220,7 +220,7 @@ void Anonymizer::getProgressFinished(const bool isFinish, const int process_No)
 
 void Anonymizer::slot_showAbout()
 {
-	QMessageBox::about(this, tr("About"), tr("<a href = https://github.com/bill4278/Anonymizer >https://github.com/bill4278/Anonymizer</a>"  "<br/><br/>Email: bill4278@foxmail.com"));
+	QMessageBox::about(this, tr("About & Update"), tr("<a href = https://github.com/bill4278/Anonymizer/releases >https://github.com/bill4278/Anonymizer/releases</a>"  "<br/><br/>Email: bill4278@foxmail.com"));
 }
 
 void Anonymizer::slot_showAboutQt()
