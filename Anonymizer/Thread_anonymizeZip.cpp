@@ -28,7 +28,7 @@ void threadAnonyZip::getProgressFinished(bool isFinished)
 {
 	dcmProgressFinished = isFinished;
 }
-void threadAnonyZip::anonymizeZip(QString folderChoose)
+void threadAnonyZip::anonymizeZip(QString folderChoose, const bool isNeedRemoveInstitute)
 {
 	nameFiltersZip << ("*.zip");
 	QFileInfoList zipList = m_coP.getFileList(folderChoose, nameFiltersZip);
@@ -103,7 +103,7 @@ void threadAnonyZip::anonymizeZip(QString folderChoose)
 			}
 			else
 			{
-				m_anonyDcm.DCMTK_anonymizeDcm(uncompressPath_char);
+				m_anonyDcm.DCMTK_anonymizeDcm(uncompressPath_char, isNeedRemoveInstitute);
 
 				nameFiltersAllSuffix << "*.*";
 				QFileInfoList zipFileList = m_coP.getFileList(uncompressPath_char, nameFiltersAllSuffix);
@@ -134,7 +134,7 @@ void threadAnonyZip::anonymizeZip(QString folderChoose)
 	emit progressFinished(true, 1);
 	//dir.rmdir(uncompressPath_char);// this method only suitable for empty folder
 }
-void threadAnonyZip::anonymizeZip_2(QString folderChoose, QFileInfoList zipList)
+void threadAnonyZip::anonymizeZip_2(QString folderChoose, QFileInfoList zipList, const bool isNeedRemoveInstitute)
 {
 	QString createUnzipDir = folderChoose + "/anonymizer_unzip_temp/";
 	QDir dir;
@@ -207,7 +207,7 @@ void threadAnonyZip::anonymizeZip_2(QString folderChoose, QFileInfoList zipList)
 			}
 			else
 			{
-				m_anonyDcm.DCMTK_anonymizeDcm(uncompressPath_char);
+				m_anonyDcm.DCMTK_anonymizeDcm(uncompressPath_char, isNeedRemoveInstitute);
 
 				nameFiltersAllSuffix << "*.*";
 				QFileInfoList zipFileList = m_coP.getFileList(uncompressPath_char, nameFiltersAllSuffix);

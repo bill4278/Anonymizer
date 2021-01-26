@@ -29,8 +29,8 @@ private:
 	commonOperation m_coP;
 	QStringList nameFiltersDcm;
 public slots:
-	void DCMTK_anonymizeDcm_2(const QString folderChoose, const QFileInfoList dcmList);
-	void DCMTK_anonymizeDcm(const QString folderChoose);
+	void DCMTK_anonymizeDcm_2(const QString folderChoose, const QFileInfoList dcmList, const bool isNeedRemoveInstitute);
+	void DCMTK_anonymizeDcm(const QString folderChoose, const bool isNeedRemoveInstitute);
 signals:
 	void progressValue(const float value, const int bar_No);
 	void progressError(QString Qstr);

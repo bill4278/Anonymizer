@@ -5,7 +5,7 @@ threadAnonyDCM::threadAnonyDCM(QObject *parent) :QObject(parent)
 
 }
 
-void threadAnonyDCM::DCMTK_anonymizeDcm_2(const QString folderChoose, const QFileInfoList dcmList)
+void threadAnonyDCM::DCMTK_anonymizeDcm_2(const QString folderChoose, const QFileInfoList dcmList, const bool isNeedRemoveInstitute)
 {
 
 	QString createDir = folderChoose + "/anonymizer_dcm_temp_2/";
@@ -53,11 +53,18 @@ void threadAnonyDCM::DCMTK_anonymizeDcm_2(const QString folderChoose, const QFil
 			emit progressStatus(m_coP.str2qstr("<font color = '#389fff'>loading: </font>" + std::string(dcmPath_char)));
 
 			DcmDataset * dataset = fileformat.getDataset();
-			dataset->putAndInsertString(DCM_PatientName, "Anonymous");
+			dataset->putAndInsertString(DCM_PatientName, "ANONYMOUS");
 			dataset->putAndInsertString(DCM_PatientID, "	");
 			dataset->putAndInsertString(DCM_PatientSex, "	");
 			dataset->putAndInsertString(DCM_PatientAge, "	");
 			dataset->putAndInsertString(DCM_PatientBirthDate, "	");
+			if (isNeedRemoveInstitute)
+			{
+				dataset->putAndInsertString(DCM_InstitutionName, "	");
+				dataset->putAndInsertString(DCM_InstitutionAddress, "	");
+				dataset->putAndInsertString(DCM_InstitutionalDepartmentName, "	");
+				dataset->putAndInsertString(DCM_InstitutionCodeSequence, "	");
+			}
 			saveStatus = fileformat.saveFile(m_coP.qstr2str(createDir + "temp.dcm").c_str());
 
 			int removeStatus = m_coP.removeFile(dcmPath_char);
@@ -99,7 +106,7 @@ void threadAnonyDCM::DCMTK_anonymizeDcm_2(const QString folderChoose, const QFil
 	emit progressFinished(true, 0);
 }
 
-void threadAnonyDCM::DCMTK_anonymizeDcm(const QString folderChoose)
+void threadAnonyDCM::DCMTK_anonymizeDcm(const QString folderChoose, const bool isNeedRemoveInstitute)
 {
 	nameFiltersDcm << ("*.dcm");
 	QFileInfoList dcmList = m_coP.getFileList(folderChoose, nameFiltersDcm);
@@ -155,11 +162,18 @@ void threadAnonyDCM::DCMTK_anonymizeDcm(const QString folderChoose)
 			emit progressStatus(m_coP.str2qstr("<font color = '#389fff'>loading: </font>" + std::string(dcmPath_char)));
 
 			DcmDataset * dataset = fileformat.getDataset();
-			dataset->putAndInsertString(DCM_PatientName, "Anonymous");
+			dataset->putAndInsertString(DCM_PatientName, "ANONYMOUS");
 			dataset->putAndInsertString(DCM_PatientID, "	");
 			dataset->putAndInsertString(DCM_PatientSex, "	");
 			dataset->putAndInsertString(DCM_PatientAge, "	");
 			dataset->putAndInsertString(DCM_PatientBirthDate, "	");
+			if (isNeedRemoveInstitute)
+			{
+				dataset->putAndInsertString(DCM_InstitutionName, "	");
+				dataset->putAndInsertString(DCM_InstitutionAddress, "	");
+				dataset->putAndInsertString(DCM_InstitutionalDepartmentName, "	");
+				dataset->putAndInsertString(DCM_InstitutionCodeSequence, "	");
+			}
 			saveStatus = fileformat.saveFile(m_coP.qstr2str(createDir + "temp.dcm").c_str());
 
 			int removeStatus = m_coP.removeFile(dcmPath_char);

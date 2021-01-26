@@ -47,7 +47,7 @@ public:
 	Anonymizer::~Anonymizer();
 	QFileDialog *fileDialog = new QFileDialog(this);
 
-
+	
 
 private:
 	Ui::mainWindow ui;
@@ -74,15 +74,20 @@ private:
 
 	bool is_logBrowserCollpased = true;
 	bool isProgressFinish = false;
+	bool isNeedRemoveInstitute = false;
 
 signals:
-	void anonyDCMStart(const QString);
-	void anonyZipStart(const QString);
+	void anonyDCMStart(const QString, const bool);
+	void anonyZipStart(const QString, const bool);
 
-	void anonyDCMStart_2(const QString, const QFileInfoList fileList);
-	void anonyZipStart_2(const QString, const QFileInfoList fileList);
+	void anonyDCMStart_2(const QString, const QFileInfoList, const bool);
+	void anonyZipStart_2(const QString, const QFileInfoList, const bool);
 
-	void anonyNoSufStart(const QString);
+	void anonyNoSufStart(const QString, const bool);
+
+	
+
+
 
 private slots:
 	void slot_btn_chooseFolderForDcm();
@@ -99,6 +104,8 @@ private slots:
 	void closeEvent(QCloseEvent *event);
 	void slot_showAbout();
 	void slot_showAboutQt();
+
+	void slot_needRemoveInstitution();
 
 };
 Q_DECLARE_METATYPE(QFileInfoList);

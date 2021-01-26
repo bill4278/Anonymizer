@@ -28,7 +28,7 @@ void threadAnonyNoSuffix::getProgressFinished(bool isFinished)
 {
 	dcmProgressFinished = isFinished;
 }
-void threadAnonyNoSuffix::anonymizeNosuffix(QString folderChoose)
+void threadAnonyNoSuffix::anonymizeNosuffix(QString folderChoose, const bool isNeedRemoveInstitute)
 {
 	nameFiltersAllFile << "*";
 	QFileInfoList AllFilesList = m_coP.getFileList(folderChoose, nameFiltersAllFile);
@@ -56,7 +56,7 @@ void threadAnonyNoSuffix::anonymizeNosuffix(QString folderChoose)
 	{
 		QFileInfoList tempFileList;
 		tempFileList.append(NoSuffixList.at(j));// just for progress bar ...
-		m_anonyDcm.DCMTK_anonymizeDcm_2(folderChoose, tempFileList);
+		m_anonyDcm.DCMTK_anonymizeDcm_2(folderChoose, tempFileList, isNeedRemoveInstitute);
 		emit progressValue(100 * (j + 1) / NoSuffixList.size(), 3);
 	}
 	emit progressFinished(true, 2);

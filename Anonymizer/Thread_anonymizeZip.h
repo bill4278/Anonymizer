@@ -26,8 +26,8 @@ private:
 	CZlib m_zlib;
 	bool dcmProgressFinished = false;
 	public slots:
-	void anonymizeZip(const QString folderChoose);
-	void anonymizeZip_2(const QString folderChoose, const QFileInfoList zipList);
+	void anonymizeZip(const QString folderChoose, const bool isNeedRemoveInstitute);
+	void anonymizeZip_2(const QString folderChoose, const QFileInfoList zipList, const bool isNeedRemoveInstitute);
 	void getProgressValue(const float value, const int bar_No);
 	void getProgressError(QString Qstr);
 	void getProgressStatus(QString Qstr);

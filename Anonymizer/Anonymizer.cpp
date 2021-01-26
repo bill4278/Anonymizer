@@ -74,6 +74,7 @@ void Anonymizer::setupConnection()
 	connect(ui.actionAbout_Qt, SIGNAL(triggered()), this, SLOT(slot_showAboutQt()));
 
 	connect(ui.showLogBtn, SIGNAL(clicked()), this, SLOT(slot_btn_collpaseLogBrowser()));
+	connect(ui.rmInstitutionCheckBox, SIGNAL(stateChanged(int)), this, SLOT(slot_needRemoveInstitution()));
 	
 
 }
@@ -96,6 +97,7 @@ void Anonymizer::processingUi()
 	ui.anoNofixBtn->setDisabled(true);
 	ui.actionAbout->setDisabled(true);
 	ui.actionAbout_Qt->setDisabled(true);
+	ui.rmInstitutionCheckBox->setDisabled(true);
 }
 
 void Anonymizer::finishUi()
@@ -108,6 +110,7 @@ void Anonymizer::finishUi()
 	ui.anoNofixBtn->setDisabled(false);
 	ui.actionAbout->setDisabled(false);
 	ui.actionAbout_Qt->setDisabled(false);
+	ui.rmInstitutionCheckBox->setDisabled(false);
 }
 
 void Anonymizer::printLog(QString logQStr)
@@ -220,7 +223,7 @@ void Anonymizer::getProgressFinished(const bool isFinish, const int process_No)
 
 void Anonymizer::slot_showAbout()
 {
-	QMessageBox::about(this, tr("About & Update"), tr("<a href = https://github.com/bill4278/Anonymizer/releases >https://github.com/bill4278/Anonymizer/releases</a>"  "<br/><br/>Email: bill4278@foxmail.com"));
+	QMessageBox::about(this, tr("About & Update"), tr("<a href = https://github.com/bill4278/Anonymizer/releases > https://github.com/bill4278/Anonymizer/releases </a>"  "<br/><br/><a href = bill4278@foxmail.com > bill4278@foxmail.com</a>"));
 }
 
 void Anonymizer::slot_showAboutQt()
@@ -270,7 +273,7 @@ void Anonymizer::slot_btn_chooseFolderForDcm()
 		if (m_objThreadForDcm)
 		{
 			m_objThreadForDcm->start();                //开启线程
-			emit anonyDCMStart(folderChoose);                  //发出信号，启动子线程的指定槽函数go
+			emit anonyDCMStart(folderChoose, isNeedRemoveInstitute);                  //发出信号，启动子线程的指定槽函数go
 		}
 
 
@@ -304,7 +307,7 @@ void Anonymizer::slot_btn_chooseFolderForZip()
 		if (m_objThreadForZip)
 		{
 			m_objThreadForZip->start();
-			emit anonyZipStart(folderChoose);
+			emit anonyZipStart(folderChoose, isNeedRemoveInstitute);
 		}
 
 		
@@ -337,7 +340,7 @@ void Anonymizer::slot_btn_chooseFolderForNoSuffix()
 		if (m_objThreadForNoSuf)
 		{
 			m_objThreadForNoSuf->start();
-			emit anonyNoSufStart(folderChoose);
+			emit anonyNoSufStart(folderChoose, isNeedRemoveInstitute);
 		}
 
 	}
@@ -397,13 +400,13 @@ void Anonymizer::slot_btn_chooseFolder()
 		if (m_objThreadForDcm && m_objThreadForZip && m_objThreadForNoSuf)
 		{
 			m_objThreadForDcm->start();
-			emit anonyDCMStart(folderChoose);
+			emit anonyDCMStart(folderChoose, isNeedRemoveInstitute);
 
 			m_objThreadForZip->start(); 
-			emit anonyZipStart(folderChoose);
+			emit anonyZipStart(folderChoose, isNeedRemoveInstitute);
 
 			m_objThreadForNoSuf->start();
-			emit anonyNoSufStart(folderChoose);
+			emit anonyNoSufStart(folderChoose, isNeedRemoveInstitute);
 		}
 
 	}
@@ -441,7 +444,7 @@ void Anonymizer::slot_btn_chooseFile()
 			}
 
 			m_objThreadForZip->start();
-			emit anonyZipStart_2(fileFolder, fileList);
+			emit anonyZipStart_2(fileFolder, fileList, isNeedRemoveInstitute);
 		}
 		else
 		{
@@ -469,8 +472,22 @@ void Anonymizer::slot_btn_chooseFile()
 
 
 			m_objThreadForDcm->start();
-			emit anonyDCMStart_2(fileFolder, fileList);
+			emit anonyDCMStart_2(fileFolder, fileList, isNeedRemoveInstitute);
 		}
 	}
 
+}
+
+void Anonymizer::slot_needRemoveInstitution()
+{
+	if (ui.rmInstitutionCheckBox->checkState() == Qt::Checked)
+	{
+		isNeedRemoveInstitute = true;
+		std::cout << isNeedRemoveInstitute << std::endl;
+	}
+	else if (ui.rmInstitutionCheckBox->checkState() == Qt::Unchecked)
+	{
+		isNeedRemoveInstitute = false;
+		std::cout << isNeedRemoveInstitute << std::endl;
+	}
 }

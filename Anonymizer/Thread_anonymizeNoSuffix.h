@@ -24,7 +24,7 @@ private:
 	threadAnonyDCM m_anonyDcm;
 	bool dcmProgressFinished = false;
 	public slots:
-	void anonymizeNosuffix(const QString folderChoose);
+	void anonymizeNosuffix(const QString folderChoose, const bool isNeedRemoveInstitute);
 	void getProgressValue(const float value, const int bar_No);
 	void getProgressError(QString Qstr);
 	void getProgressStatus(QString Qstr);

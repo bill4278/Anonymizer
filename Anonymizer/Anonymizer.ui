@@ -18,7 +18,7 @@
    <bool>false</bool>
   </property>
   <property name="windowTitle">
-   <string>Anonymizer 2.0</string>
+   <string>Anonymizer 2.2</string>
   </property>
   <property name="autoFillBackground">
    <bool>true</bool>
@@ -54,7 +54,7 @@
     <property name="geometry">
      <rect>
       <x>260</x>
-      <y>380</y>
+      <y>370</y>
       <width>141</width>
       <height>16</height>
      </rect>
@@ -70,7 +70,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>80</y>
+      <y>20</y>
       <width>1111</width>
       <height>21</height>
      </rect>
@@ -95,14 +95,14 @@
    <widget class="QLabel" name="label_6">
     <property name="geometry">
      <rect>
-      <x>280</x>
-      <y>420</y>
-      <width>321</width>
+      <x>190</x>
+      <y>410</y>
+      <width>401</width>
       <height>20</height>
      </rect>
     </property>
     <property name="text">
-     <string>Copyright © 2020 huangbiubiu, All Rights Reserved.</string>
+     <string>Copyright © 2021 huangbiubiu, All Rights Reserved.</string>
     </property>
    </widget>
    <widget class="QPushButton" name="anoDcmBtn">
@@ -113,6 +113,11 @@
       <width>161</width>
       <height>41</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>8</pointsize>
+     </font>
     </property>
     <property name="text">
      <string>anonymize all .dcm</string>
@@ -127,6 +132,11 @@
       <height>41</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <pointsize>8</pointsize>
+     </font>
+    </property>
     <property name="text">
      <string>anonymize all .zip</string>
     </property>
@@ -139,6 +149,11 @@
       <width>161</width>
       <height>41</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>8</pointsize>
+     </font>
     </property>
     <property name="text">
      <string>anonymize all nosuffix</string>
@@ -208,11 +223,16 @@ g
    <widget class="QPushButton" name="openFolderBtn">
     <property name="geometry">
      <rect>
-      <x>120</x>
-      <y>40</y>
-      <width>121</width>
+      <x>100</x>
+      <y>50</y>
+      <width>151</width>
       <height>31</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>8</pointsize>
+     </font>
     </property>
     <property name="text">
      <string>anonymize folder</string>
@@ -221,14 +241,56 @@ g
    <widget class="QPushButton" name="openFileBtn">
     <property name="geometry">
      <rect>
-      <x>370</x>
-      <y>40</y>
-      <width>121</width>
+      <x>350</x>
+      <y>50</y>
+      <width>151</width>
       <height>31</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <pointsize>8</pointsize>
+     </font>
+    </property>
     <property name="text">
      <string>anonymize file</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="rmInstitutionCheckBox">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>100</y>
+      <width>161</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>8</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>remove institution</string>
+    </property>
+    <property name="checked">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>610</x>
+      <y>30</y>
+      <width>72</width>
+      <height>15</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Log:</string>
     </property>
    </widget>
   </widget>
@@ -238,7 +300,7 @@ g
      <x>0</x>
      <y>0</y>
      <width>600</width>
-     <height>23</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuAbout">
